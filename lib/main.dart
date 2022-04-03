@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+void main() async {
+  await dotenv.load();
   runApp(const MyApp());
 }
 
@@ -11,7 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: dotenv.get('SAMPLE_KEY'),
       theme: ThemeData(
         // This is the theme of your application.
         //
