@@ -42,30 +42,42 @@ class QuoteAddScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: <Widget>[
-          const TextField(),
-          const SizedBox(height: 8),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {},
-              child: const Text('登録')
-            )
-          ),
-          const SizedBox(height: 8),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {},
-              child: const Text('キャンセル')
-            )
-          ),
-        ],
-      ),
+      body: Container(
+        padding: const EdgeInsets.symmetric(
+          vertical: 64,
+          horizontal: 32
+        ),
+        child: Column(
+          children: const <Widget>[
+            TextField(
+              decoration: InputDecoration(
+                hintText: '記事タイトル',
+                labelText: '記事タイトル',
+              ),
+            ),
+            SizedBox(height: 8),
+            TextField(
+              decoration: InputDecoration(
+                hintText: 'URL',
+                labelText: 'URL',
+              ),
+            ),
+            SizedBox(height: 8),
+            TextField(
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
+              decoration: InputDecoration(
+                hintText: '内容',
+                labelText: '内容',
+              ),
+            ),
+          ],
+        ),
+    ),
       persistentFooterButtons: <Widget>[
         IconButton(
           icon: const Icon(Icons.arrow_back_ios_new),
+          alignment: Alignment.bottomLeft,
           onPressed: () {}
         ),
         IconButton(
