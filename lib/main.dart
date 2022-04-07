@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 Future<void> main() async {
   await Firebase.initializeApp(
@@ -42,49 +43,69 @@ class QuoteAddScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        padding: const EdgeInsets.symmetric(
-          vertical: 64,
-          horizontal: 32
-        ),
-        child: Column(
-          children: const <Widget>[
-            TextField(
-              decoration: InputDecoration(
-                hintText: '記事タイトル',
-                labelText: '記事タイトル',
+      body: SingleChildScrollView(
+        child: Container(
+          margin: const EdgeInsets.only(
+            top: 64,
+            right: 32,
+            left: 32
+          ),
+          child: Column(
+            children: const <Widget>[
+              TextField(
+                decoration: InputDecoration(
+                  hintText: '記事タイトル',
+                  labelText: '記事タイトル',
+                ),
               ),
-            ),
-            SizedBox(height: 8),
-            TextField(
-              decoration: InputDecoration(
-                hintText: 'URL',
-                labelText: 'URL',
+              SizedBox(height: 8),
+              TextField(
+                decoration: InputDecoration(
+                  hintText: 'URL',
+                  labelText: 'URL',
+                ),
               ),
-            ),
-            SizedBox(height: 8),
-            TextField(
-              keyboardType: TextInputType.multiline,
-              maxLines: null,
-              decoration: InputDecoration(
-                hintText: '内容',
-                labelText: '内容',
+              SizedBox(height: 8),
+              TextField(
+                keyboardType: TextInputType.multiline,
+                maxLines: null,
+                decoration: InputDecoration(
+                  hintText: '内容',
+                  labelText: '内容',
+                ),
               ),
+            ],
+          ),
+        )
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child:Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            IconButton(
+              padding: const EdgeInsets.only(
+                top: 8,
+                left: 24,
+                bottom: 32
+              ),
+              iconSize: 32,
+              icon: const Icon(Icons.arrow_back_ios_new),
+              alignment: Alignment.bottomLeft,
+              onPressed: () {}
             ),
+            IconButton(
+              padding: const EdgeInsets.only(
+                top: 8,
+                right: 24,
+                bottom: 32
+              ),
+              iconSize: 32,
+              icon: const Icon(Icons.add_task),
+              onPressed: () {}
+            )
           ],
         ),
-    ),
-      persistentFooterButtons: <Widget>[
-        IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new),
-          alignment: Alignment.bottomLeft,
-          onPressed: () {}
-        ),
-        IconButton(
-          icon: const Icon(Icons.add_task),
-          onPressed: () {}
-        )
-      ]
+      )
     );
   }
 }
