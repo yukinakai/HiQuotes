@@ -49,6 +49,22 @@ class _QuoteAddScreenState extends State<QuoteAddScreen> {
   String url = '';
   String content = '';
 
+  Future _showAlertDialog(BuildContext context) async {
+    return showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              title: const Text('エラータイトル'),
+              content: const Text('エラーコンテント'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {},
+                  child: const Text('OK'),
+                )
+              ]);
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     CollectionReference quotes =
@@ -104,25 +120,37 @@ class _QuoteAddScreenState extends State<QuoteAddScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               IconButton(
-                  padding: const EdgeInsets.only(top: 8, left: 24, bottom: 32),
-                  iconSize: 32,
-                  icon: const Icon(Icons.arrow_back_ios_new),
-                  alignment: Alignment.bottomLeft,
-                  onPressed: () {
-                    quotes
-                        .add({
-                          'title': title,
-                          'url': url,
-                          'contenst': content,
-                        })
-                        .then((value) => print('OK'))
-                        .catchError((error) => print("NG"));
-                  }),
+                padding: const EdgeInsets.only(top: 8, left: 24, bottom: 32),
+                iconSize: 32,
+                icon: const Icon(Icons.arrow_back_ios_new),
+                alignment: Alignment.bottomLeft,
+                onPressed: () {},
+              ),
               IconButton(
                   padding: const EdgeInsets.only(top: 8, right: 24, bottom: 32),
                   iconSize: 32,
                   icon: const Icon(Icons.add_task),
-                  onPressed: () {})
+                  onPressed: () {
+                    // final FirebaseAuth auth = FirebaseAuth.instance;
+                    FirebaseAuth.instance
+                        .authStateChanges()
+                        .listen((User? user) {
+                      if (user == null) {
+                        _showAlertDialog(context);
+                        print("user not found");
+                      } else {
+                        final uid = user.uid;
+                        quotes
+                            .add({
+                              'title': title,
+                              'url': url,
+                              'content': content,
+                            })
+                            .then((value) => print(uid))
+                            .catchError((error) => _showAlertDialog(context));
+                      }
+                    });
+                  }),
             ],
           ),
         ));
