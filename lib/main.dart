@@ -131,7 +131,6 @@ class _QuoteAddScreenState extends State<QuoteAddScreen> {
                   iconSize: 32,
                   icon: const Icon(Icons.add_task),
                   onPressed: () {
-                    // final FirebaseAuth auth = FirebaseAuth.instance;
                     FirebaseAuth.instance
                         .authStateChanges()
                         .listen((User? user) {
