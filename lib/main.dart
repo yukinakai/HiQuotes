@@ -58,7 +58,7 @@ class _QuoteAddScreenState extends State<QuoteAddScreen> {
               content: const Text('エラーコンテント'),
               actions: <Widget>[
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () => Navigator.pop(context),
                   child: const Text('OK'),
                 )
               ]);
