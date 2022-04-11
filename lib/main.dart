@@ -32,8 +32,47 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const QuoteAddScreen(),
+      home: const QuotesListScreen(),
     );
+  }
+}
+
+class QuotesListScreen extends StatefulWidget {
+  const QuotesListScreen({Key? key}) : super(key: key);
+
+  @override
+  State<QuotesListScreen> createState() => _QuotesListScreenState();
+}
+
+class _QuotesListScreenState extends State<QuotesListScreen> {
+  @override
+  Widget build(BuildContext context) {
+    final ButtonStyle style =
+      TextButton.styleFrom(primary: Theme.of(context).colorScheme.onPrimary);
+
+    return Scaffold(
+        appBar: AppBar(
+          leading: Image.asset(
+            'images/Logo.jpg',
+            height: AppBar().preferredSize.height,
+            // width: 40,
+          ),
+          // leading: const Icon(Icons.back_hand),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {},
+              child: const Text('ログアウト'),
+              style: style,
+            )
+          ],
+        ),
+        body: const Center(
+            child: Text(
+              'Sample',
+              style: TextStyle(fontSize: 24),
+            )
+        )
+      );
   }
 }
 
@@ -67,9 +106,6 @@ class _QuoteAddScreenState extends State<QuoteAddScreen> {
 
   @override
   Widget build(BuildContext context) {
-    CollectionReference quotes =
-        FirebaseFirestore.instance.collection('quotes');
-
     return Scaffold(
         body: SingleChildScrollView(
             child: Container(
@@ -138,12 +174,18 @@ class _QuoteAddScreenState extends State<QuoteAddScreen> {
                         _showAlertDialog(context);
                         print("user not found");
                       } else {
+                        CollectionReference quotes =
+                            FirebaseFirestore.instance.collection('quotes');
                         final uid = user.uid;
+                        final now = DateTime.now().toUtc();
                         quotes
                             .add({
+                              'user_id': uid,
                               'title': title,
                               'url': url,
                               'content': content,
+                              'created_at': now,
+                              'updated_at': now,
                             })
                             .then((value) => print(uid))
                             .catchError((error) => _showAlertDialog(context));
