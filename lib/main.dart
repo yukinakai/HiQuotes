@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hi_quotes/class/quote.dart';
 
 Future<void> main() async {
   await Firebase.initializeApp(
@@ -47,32 +48,44 @@ class QuotesListScreen extends StatefulWidget {
 class _QuotesListScreenState extends State<QuotesListScreen> {
   @override
   Widget build(BuildContext context) {
-    final ButtonStyle style =
-      TextButton.styleFrom(primary: Theme.of(context).colorScheme.onPrimary);
-
     return Scaffold(
         appBar: AppBar(
-          leading: Image.asset(
+          centerTitle: false,
+          title: Image.asset(
             'images/Logo.jpg',
-            height: AppBar().preferredSize.height,
-            // width: 40,
+            height: 32,
           ),
-          // leading: const Icon(Icons.back_hand),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {},
-              child: const Text('ログアウト'),
-              style: style,
-            )
-          ],
+          backgroundColor: Colors.white,
         ),
-        body: const Center(
-            child: Text(
-              'Sample',
-              style: TextStyle(fontSize: 24),
-            )
-        )
-      );
+        body: Column(
+          children: <Widget>[
+            Expanded(
+                child: StreamBuilder<QuerySnapshot>(
+              stream:
+                  FirebaseFirestore.instance.collection('quotes').snapshots(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasError) {
+                  return Text('somthing wrong');
+                }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Text('Loading');
+                }
+                final data =
+                    snapshot.data!.docs.map((doc) => Quote(doc)).toList();
+                return ListView.builder(
+                    itemCount: data.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        isThreeLine: true,
+                        title: Text(data[index].content),
+                        subtitle: Text(data[index].title + '\n' + data[index].updatedAt),
+                      );
+                    });
+              },
+            ))
+          ],
+        ));
   }
 }
 
