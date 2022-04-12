@@ -46,46 +46,94 @@ class QuotesListScreen extends StatefulWidget {
 }
 
 class _QuotesListScreenState extends State<QuotesListScreen> {
+  late ScrollController controller;
+  DocumentSnapshot? _lastVisible;
+  late bool _isLoading;
+
+  final List<DocumentSnapshot> _data = <DocumentSnapshot<Object>>[];
+
+  @override
+  void initState() {
+    controller = ScrollController()..addListener(_scrollListener);
+    super.initState();
+    _isLoading = true;
+    _getData();
+  }
+
+  Future<void> _getData() async {
+    QuerySnapshot data;
+    if (_lastVisible == null) {
+      data = await FirebaseFirestore.instance
+          .collection('quotes')
+          .orderBy('updated_at', descending: false)
+          .limit(10)
+          .get();
+    } else {
+      data = await FirebaseFirestore.instance
+          .collection('quotes')
+          .orderBy('updated_at', descending: false)
+          .startAfter([_lastVisible!['updated_at']])
+          .limit(10)
+          .get();
+    }
+
+    if (data.docs.isNotEmpty) {
+      _lastVisible = data.docs[data.docs.length - 1];
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _data.addAll(data.docs);
+        });
+      }
+    } else {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          centerTitle: false,
-          title: Image.asset(
-            'images/Logo.jpg',
-            height: 32,
-          ),
-          backgroundColor: Colors.white,
+      appBar: AppBar(
+        centerTitle: false,
+        title: Image.asset(
+          'images/Logo.jpg',
+          height: 32,
         ),
-        body: Column(
-          children: <Widget>[
-            Expanded(
-                child: StreamBuilder<QuerySnapshot>(
-              stream:
-                  FirebaseFirestore.instance.collection('quotes').snapshots(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (snapshot.hasError) {
-                  return Text('somthing wrong');
-                }
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Text('Loading');
-                }
-                final data =
-                    snapshot.data!.docs.map((doc) => Quote(doc)).toList();
-                return ListView.builder(
-                    itemCount: data.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        isThreeLine: true,
-                        title: Text(data[index].content),
-                        subtitle: Text(data[index].title + '\n' + data[index].updatedAt),
-                      );
-                    });
-              },
-            ))
-          ],
-        ));
+        backgroundColor: Colors.white,
+      ),
+      body: RefreshIndicator(
+        child: ListView.builder(
+          controller: controller,
+          itemCount: _data.length,
+          itemBuilder: (_, index) {
+            if (index < _data.length) {
+              final DocumentSnapshot document = _data[index];
+              return ListTile(
+                title: Text(document.get('content')),
+                subtitle: Text(document.get('title'),),
+              );
+            }
+              return const Center(
+                child: Text('あああ'),
+              );
+            }),
+        onRefresh: () async {
+          _data.clear();
+          _lastVisible = null;
+          await _getData();
+        },
+      ));
+  }
+
+  void _scrollListener() {
+    if (!_isLoading) {
+      if (controller.position.pixels == controller.position.maxScrollExtent) {
+        setState(() => _isLoading = true);
+        _getData();
+      }
+    }
   }
 }
 
