@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hi_quotes/class/quote.dart';
+import 'package:intl/intl.dart';
 
 Future<void> main() async {
   await Firebase.initializeApp(
@@ -34,6 +34,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: const QuotesListScreen(),
+      // home: const QuoteAddScreen(),
     );
   }
 }
@@ -65,13 +66,13 @@ class _QuotesListScreenState extends State<QuotesListScreen> {
     if (_lastVisible == null) {
       data = await FirebaseFirestore.instance
           .collection('quotes')
-          .orderBy('updated_at', descending: false)
+          .orderBy('updated_at', descending: true)
           .limit(10)
           .get();
     } else {
       data = await FirebaseFirestore.instance
           .collection('quotes')
-          .orderBy('updated_at', descending: false)
+          .orderBy('updated_at', descending: true)
           .startAfter([_lastVisible!['updated_at']])
           .limit(10)
           .get();
@@ -110,10 +111,16 @@ class _QuotesListScreenState extends State<QuotesListScreen> {
           itemBuilder: (_, index) {
             if (index < _data.length) {
               final DocumentSnapshot document = _data[index];
-              return ListTile(
-                title: Text(document.get('content')),
-                subtitle: Text(document.get('title'),),
-              );
+              String updateAt =
+                DateFormat('yyyy/MM/dd H:m:s')
+                .format(document.get('updated_at').toDate().toLocal());
+              return Column(children: <Widget>[
+                ListTile(
+                  title: Text(document.get('content')),
+                  subtitle: Text(document.get('title') + '\n' + updateAt),
+                ),
+                const Divider()
+              ]);
             }
               return const Center(
                 child: Text('あああ'),
