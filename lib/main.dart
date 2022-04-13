@@ -23,16 +23,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final FirebaseAuth auth = FirebaseAuth.instance;
-    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+    auth.authStateChanges().listen((User? user) {
       if (user == null) {
         auth.signInAnonymously();
       }
     });
     return MaterialApp(
       title: 'アプリタイトルです',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(fontFamily: 'Noto Sans JP'),
       home: const QuotesListScreen(),
       // home: const QuoteAddScreen(),
     );
@@ -62,35 +60,43 @@ class _QuotesListScreenState extends State<QuotesListScreen> {
   }
 
   Future<void> _getData() async {
-    QuerySnapshot data;
-    if (_lastVisible == null) {
-      data = await FirebaseFirestore.instance
-          .collection('quotes')
-          .orderBy('updated_at', descending: true)
-          .limit(10)
-          .get();
-    } else {
-      data = await FirebaseFirestore.instance
-          .collection('quotes')
-          .orderBy('updated_at', descending: true)
-          .startAfter([_lastVisible!['updated_at']])
-          .limit(10)
-          .get();
-    }
-
-    if (data.docs.isNotEmpty) {
-      _lastVisible = data.docs[data.docs.length - 1];
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-          _data.addAll(data.docs);
-        });
+    FirebaseAuth.instance.authStateChanges().listen((User? user) async {
+      if (user == null) {
+        print('no-user');
+      } else {
+        String uid = user.uid;
+        QuerySnapshot data;
+        if (_lastVisible == null) {
+          data = await FirebaseFirestore.instance
+              .collection('quotes')
+              .where('user_id', isEqualTo: uid)
+              .orderBy('updated_at', descending: true)
+              .limit(10)
+              .get();
+        } else {
+          data = await FirebaseFirestore.instance
+              .collection('quotes')
+              .where('user_id', isEqualTo: uid)
+              .orderBy('updated_at', descending: true)
+              .startAfter([_lastVisible!['updated_at']])
+              .limit(10)
+              .get();
+        }
+        if (data.docs.isNotEmpty) {
+          _lastVisible = data.docs[data.docs.length - 1];
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+              _data.addAll(data.docs);
+            });
+          }
+        } else {
+          setState(() {
+            _isLoading = false;
+          });
+        }
       }
-    } else {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+    });
   }
 
   @override
@@ -106,22 +112,36 @@ class _QuotesListScreenState extends State<QuotesListScreen> {
       ),
       body: RefreshIndicator(
         child: ListView.builder(
-          controller: controller,
-          itemCount: _data.length,
-          itemBuilder: (_, index) {
-            if (index < _data.length) {
-              final DocumentSnapshot document = _data[index];
-              String updateAt =
-                DateFormat('yyyy/MM/dd H:m:s')
-                .format(document.get('updated_at').toDate().toLocal());
-              return Column(children: <Widget>[
-                ListTile(
-                  title: Text(document.get('content')),
-                  subtitle: Text(document.get('title') + '\n' + updateAt),
-                ),
-                const Divider()
-              ]);
-            }
+            controller: controller,
+            itemCount: _data.length,
+            itemBuilder: (_, index) {
+              if (index < _data.length) {
+                final DocumentSnapshot document = _data[index];
+                String updateAt = DateFormat('yyyy/MM/dd H:m:s')
+                    .format(document.get('updated_at').toDate().toLocal());
+                return Column(children: <Widget>[
+                  ListTile(
+                    title: Text(
+                      document.get('content'),
+                      maxLines: 3,
+                      style: const TextStyle(
+                        color: Color.fromRGBO(0, 0, 0, 100),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    subtitle: Text(document.get('title') + '\n' + updateAt),
+                    contentPadding: const EdgeInsets.symmetric(
+                      vertical: 8,
+                      horizontal: 16,
+                    ),
+                    onTap: () => {},
+                  ),
+                  const Divider(
+                    thickness: 6,
+                    color: Color.fromRGBO(218, 210, 197, 75),
+                  )
+                ]);
+              }
               return const Center(
                 child: Text('あああ'),
               );
@@ -131,7 +151,16 @@ class _QuotesListScreenState extends State<QuotesListScreen> {
           _lastVisible = null;
           await _getData();
         },
-      ));
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => {},
+        child: const Icon(
+          Icons.add,
+          color: Colors.black,
+        ),
+        backgroundColor: const Color.fromRGBO(235, 239, 55, 100),
+      ),
+    );
   }
 
   void _scrollListener() {
