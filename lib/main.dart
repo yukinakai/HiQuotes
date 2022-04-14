@@ -153,7 +153,10 @@ class _QuotesListScreenState extends State<QuotesListScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => {},
+        onPressed: () => {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const QuoteAddScreen()))
+        },
         child: const Icon(
           Icons.add,
           color: Colors.black,
@@ -257,7 +260,9 @@ class _QuoteAddScreenState extends State<QuoteAddScreen> {
                 iconSize: 32,
                 icon: const Icon(Icons.arrow_back_ios_new),
                 alignment: Alignment.bottomLeft,
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pop(context);
+                },
               ),
               IconButton(
                   padding: const EdgeInsets.only(top: 8, right: 24, bottom: 32),
@@ -284,7 +289,12 @@ class _QuoteAddScreenState extends State<QuoteAddScreen> {
                               'created_at': now,
                               'updated_at': now,
                             })
-                            .then((value) => print(uid))
+                            .then((value) => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const QuotesListScreen()
+                              )
+                            ))
                             .catchError((error) => _showAlertDialog(context));
                       }
                     });
