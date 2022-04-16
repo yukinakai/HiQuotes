@@ -3,17 +3,25 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:hi_quotes/firebase_options.dart';
 
 Future<void> main() async {
-  await Firebase.initializeApp(
-      options: const FirebaseOptions(
-          apiKey: "AIzaSyBUnnSSXRr43Y2RCLd37pahmueMll5HO_0",
-          authDomain: "hi-quotes-13d85.firebaseapp.com",
-          projectId: "hi-quotes-13d85",
-          storageBucket: "hi-quotes-13d85.appspot.com",
-          messagingSenderId: "597694034365",
-          appId: "1:597694034365:web:4d72b5ead3fbb2e633e2d4",
-          measurementId: "G-0SKCGX7SHC"));
+  WidgetsFlutterBinding.ensureInitialized();
+  if (Firebase.apps.isEmpty) {
+    await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform);
+    // await Firebase.initializeApp(
+    //   options: const FirebaseOptions(
+    //       apiKey: "AIzaSyBUnnSSXRr43Y2RCLd37pahmueMll5HO_0",
+    //       authDomain: "hi-quotes-13d85.firebaseapp.com",
+    //       projectId: "hi-quotes-13d85",
+    //       storageBucket: "hi-quotes-13d85.appspot.com",
+    //       messagingSenderId: "597694034365",
+    //       appId: "1:597694034365:web:4d72b5ead3fbb2e633e2d4",
+    //       measurementId: "G-0SKCGX7SHC",));
+  } else {
+    Firebase.app();
+  }
   runApp(const MyApp());
 }
 
