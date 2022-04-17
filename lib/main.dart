@@ -7,21 +7,7 @@ import 'package:hi_quotes/firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  if (Firebase.apps.isEmpty) {
-    await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform);
-    // await Firebase.initializeApp(
-    //   options: const FirebaseOptions(
-    //       apiKey: "AIzaSyBUnnSSXRr43Y2RCLd37pahmueMll5HO_0",
-    //       authDomain: "hi-quotes-13d85.firebaseapp.com",
-    //       projectId: "hi-quotes-13d85",
-    //       storageBucket: "hi-quotes-13d85.appspot.com",
-    //       messagingSenderId: "597694034365",
-    //       appId: "1:597694034365:web:4d72b5ead3fbb2e633e2d4",
-    //       measurementId: "G-0SKCGX7SHC",));
-  } else {
-    Firebase.app();
-  }
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 
@@ -40,7 +26,6 @@ class MyApp extends StatelessWidget {
       title: 'Hi Quotes',
       theme: ThemeData(fontFamily: 'Noto Sans JP'),
       home: const QuotesListScreen(),
-      // home: const QuoteAddScreen(),
     );
   }
 }
