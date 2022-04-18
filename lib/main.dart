@@ -100,6 +100,7 @@ class _QuotesListScreenState extends State<QuotesListScreen> {
           height: 32,
         ),
         backgroundColor: Colors.white,
+        automaticallyImplyLeading: false
       ),
       body: RefreshIndicator(
         child: ListView.builder(
@@ -150,7 +151,7 @@ class _QuotesListScreenState extends State<QuotesListScreen> {
           Icons.add,
           color: Colors.black,
         ),
-        backgroundColor: const Color.fromRGBO(235, 239, 55, 100),
+        backgroundColor:  Colors.yellow[400],
       ),
     );
   }
