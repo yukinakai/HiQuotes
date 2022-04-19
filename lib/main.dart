@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:hi_quotes/firebase_options.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -94,14 +95,13 @@ class _QuotesListScreenState extends State<QuotesListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: false,
-        title: Image.asset(
-          'assets/images/Logo.jpg',
-          height: 32,
-        ),
-        backgroundColor: Colors.white,
-        automaticallyImplyLeading: false
-      ),
+          centerTitle: false,
+          title: Image.asset(
+            'assets/images/Logo.jpg',
+            height: 32,
+          ),
+          backgroundColor: Colors.white,
+          automaticallyImplyLeading: false),
       body: RefreshIndicator(
         child: ListView.builder(
             controller: controller,
@@ -151,7 +151,7 @@ class _QuotesListScreenState extends State<QuotesListScreen> {
           Icons.add,
           color: Colors.black,
         ),
-        backgroundColor:  Colors.yellow[400],
+        backgroundColor: Colors.yellow[400],
       ),
     );
   }
@@ -194,102 +194,177 @@ class _QuoteAddScreenState extends State<QuoteAddScreen> {
         });
   }
 
+  void addQuotes() {
+    FirebaseAuth.instance
+      .authStateChanges()
+      .listen((User? user) {
+    if (user == null) {
+      _showAlertDialog(context);
+      print("user not found");
+    } else {
+      CollectionReference quotes =
+        FirebaseFirestore.instance.collection('quotes');
+      final uid = user.uid;
+      final now = DateTime.now().toUtc();
+      quotes
+        .add({
+          'user_id': uid,
+          'title': title,
+          'url': url,
+          'content': content,
+          'created_at': now,
+          'updated_at': now,
+        })
+        .then((value) => Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    const QuotesListScreen())))
+        .catchError((error) => _showAlertDialog(context));
+      }
+    });
+  }
+
+  final FocusNode _nodeText1 = FocusNode();
+  final FocusNode _nodeText2 = FocusNode();
+  final FocusNode _nodeText3 = FocusNode();
+  KeyboardActionsConfig _buildConfig(BuildContext context) {
+    return KeyboardActionsConfig(
+        keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
+        keyboardBarColor: Colors.grey[200],
+        nextFocus: true,
+        actions: [
+          KeyboardActionsItem(focusNode: _nodeText1, toolbarButtons: [
+            (node) {
+              return GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: const Padding(
+                  padding: EdgeInsets.all(8),
+                  child: Text('キャンセル'),
+                ),
+              );
+            }
+          ]),
+          KeyboardActionsItem(focusNode: _nodeText2, toolbarButtons: [
+            (node) {
+              return GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: const Padding(
+                  padding: EdgeInsets.all(8),
+                  child: Text('キャンセル'),
+                ),
+              );
+            }
+          ]),
+          KeyboardActionsItem(focusNode: _nodeText3, toolbarButtons: [
+            (node) {
+              return GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: const Padding(
+                  padding: EdgeInsets.all(8),
+                  child: Text('キャンセル'),
+                ),
+              );
+            },
+            (node) {
+              return GestureDetector(
+                onTap: () => addQuotes(),
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: 8,
+                    horizontal: 16,
+                  ),
+                  child: Text('登録'),
+                ),
+              );
+            },
+          ]),
+        ]);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SingleChildScrollView(
+      body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: KeyboardActions(
+          config: _buildConfig(context),
+          child: SingleChildScrollView(
             child: Container(
-          margin: const EdgeInsets.only(top: 64, right: 32, left: 32),
-          child: Column(
-            children: <Widget>[
-              TextFormField(
-                  decoration: const InputDecoration(
-                    hintText: '記事タイトル',
-                    labelText: '記事タイトル',
+              margin: const EdgeInsets.only(top: 64, right: 32, left: 32),
+              child: Column(
+                children: <Widget>[
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      hintText: '記事タイトル',
+                      labelText: '記事タイトル',
+                    ),
+                    onChanged: (String value) {
+                      setState(() {
+                        title = value;
+                      });
+                    },
+                    autofocus: true,
+                    focusNode: _nodeText1,
+                    textInputAction: TextInputAction.next,
                   ),
-                  onChanged: (String value) {
-                    setState(() {
-                      title = value;
-                    });
-                  }),
-              const SizedBox(height: 8),
-              TextFormField(
-                decoration: const InputDecoration(
-                  hintText: 'URL',
-                  labelText: 'URL',
-                ),
-                onChanged: (String value) {
-                  setState(() {
-                    url = value;
-                  });
-                },
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      hintText: 'URL',
+                      labelText: 'URL',
+                    ),
+                    onChanged: (String value) {
+                      setState(() {
+                        url = value;
+                      });
+                    },
+                    focusNode: _nodeText2,
+                    textInputAction: TextInputAction.next,
+                  ),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    decoration: const InputDecoration(
+                      hintText: '内容',
+                      labelText: '内容',
+                    ),
+                    onChanged: (String value) {
+                      setState(() {
+                        content = value;
+                      });
+                    },
+                    focusNode: _nodeText3,
+                  ),
+                ],
               ),
-              const SizedBox(height: 8),
-              TextFormField(
-                keyboardType: TextInputType.multiline,
-                maxLines: null,
-                decoration: const InputDecoration(
-                  hintText: '内容',
-                  labelText: '内容',
-                ),
-                onChanged: (String value) {
-                  setState(() {
-                    content = value;
-                  });
-                },
-              ),
-            ],
-          ),
-        )),
-        bottomNavigationBar: BottomAppBar(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              IconButton(
-                padding: const EdgeInsets.only(top: 8, left: 24, bottom: 32),
-                iconSize: 32,
-                icon: const Icon(Icons.arrow_back_ios_new),
-                alignment: Alignment.bottomLeft,
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-              IconButton(
-                  padding: const EdgeInsets.only(top: 8, right: 24, bottom: 32),
-                  iconSize: 32,
-                  icon: const Icon(Icons.add_task),
-                  onPressed: () {
-                    FirebaseAuth.instance
-                        .authStateChanges()
-                        .listen((User? user) {
-                      if (user == null) {
-                        _showAlertDialog(context);
-                        print("user not found");
-                      } else {
-                        CollectionReference quotes =
-                            FirebaseFirestore.instance.collection('quotes');
-                        final uid = user.uid;
-                        final now = DateTime.now().toUtc();
-                        quotes
-                            .add({
-                              'user_id': uid,
-                              'title': title,
-                              'url': url,
-                              'content': content,
-                              'created_at': now,
-                              'updated_at': now,
-                            })
-                            .then((value) => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const QuotesListScreen())))
-                            .catchError((error) => _showAlertDialog(context));
-                      }
-                    });
-                  }),
-            ],
-          ),
-        ));
+            )
+          )
+        )
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            IconButton(
+              padding: const EdgeInsets.only(top: 8, left: 24, bottom: 32),
+              iconSize: 32,
+              icon: const Icon(Icons.arrow_back_ios_new),
+              alignment: Alignment.bottomLeft,
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            IconButton(
+              padding: const EdgeInsets.only(top: 8, right: 24, bottom: 32),
+              iconSize: 32,
+              icon: const Icon(Icons.add_task),
+              onPressed: () => addQuotes(),
+            ),
+          ],
+        ),
+      ));
   }
 }
