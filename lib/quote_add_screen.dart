@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:hi_quotes/quotes_list_screen.dart';
+
+import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
 
 class QuoteAddScreen extends StatefulWidget {
@@ -13,9 +16,36 @@ class QuoteAddScreen extends StatefulWidget {
 }
 
 class _QuoteAddScreenState extends State<QuoteAddScreen> {
+  late StreamSubscription _intentDataStreamSubscription;
   String title = '';
   String url = '';
   String content = '';
+
+  @override
+  void initState() {
+    super.initState();
+    // For sharing or opening urls/text coming from outside the app while the app is in the memory
+    _intentDataStreamSubscription =
+        ReceiveSharingIntent.getTextStream().listen((String value) {
+      setState(() {
+        content = value;
+      });
+    }, onError: (err) {
+      // print("getLinkStream error: $err");
+    });
+    // For sharing or opening urls/text coming from outside the app while the app is closed
+    ReceiveSharingIntent.getInitialText().then((String? value) {
+      setState(() {
+        content = value ?? '';
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _intentDataStreamSubscription.cancel();
+    super.dispose();
+  }
 
   Future _showAlertDialog(BuildContext context) async {
     return showDialog<void>(
