@@ -106,10 +106,10 @@ class _QuoteAddScreenState extends State<QuoteAddScreen> {
           KeyboardActionsItem(focusNode: _nodeText1, toolbarButtons: [
             (node) {
               return GestureDetector(
-                onTap: () => Navigator.pop(context),
+                onTap: () => node.unfocus(),
                 child: const Padding(
                   padding: EdgeInsets.all(8),
-                  child: Text('キャンセル'),
+                  child: Text('閉じる'),
                 ),
               );
             }
@@ -117,10 +117,10 @@ class _QuoteAddScreenState extends State<QuoteAddScreen> {
           KeyboardActionsItem(focusNode: _nodeText2, toolbarButtons: [
             (node) {
               return GestureDetector(
-                onTap: () => Navigator.pop(context),
+                onTap: () => node.unfocus(),
                 child: const Padding(
                   padding: EdgeInsets.all(8),
-                  child: Text('キャンセル'),
+                  child: Text('閉じる'),
                 ),
               );
             }
@@ -128,10 +128,10 @@ class _QuoteAddScreenState extends State<QuoteAddScreen> {
           KeyboardActionsItem(focusNode: _nodeText3, toolbarButtons: [
             (node) {
               return GestureDetector(
-                onTap: () => Navigator.pop(context),
+                onTap: () => node.unfocus(),
                 child: const Padding(
                   padding: EdgeInsets.all(8),
-                  child: Text('キャンセル'),
+                  child: Text('閉じる'),
                 ),
               );
             },
@@ -196,6 +196,7 @@ class _QuoteAddScreenState extends State<QuoteAddScreen> {
                   TextFormField(
                     keyboardType: TextInputType.multiline,
                     maxLines: null,
+                    controller: TextEditingController(text: content),
                     decoration: const InputDecoration(
                       hintText: '内容',
                       labelText: '内容',
@@ -222,8 +223,15 @@ class _QuoteAddScreenState extends State<QuoteAddScreen> {
               iconSize: 32,
               icon: const Icon(Icons.arrow_back_ios_new),
               alignment: Alignment.bottomLeft,
-              onPressed: () {
-                Navigator.pop(context);
+              onPressed: () => {
+                if (Navigator.canPop(context)) {
+                  Navigator.pop(context)
+                } else {
+                    Navigator.push(context,
+                      MaterialPageRoute(
+                        builder: (context) => const  QuotesListScreen(),
+                      ))
+                }
               },
             ),
             IconButton(

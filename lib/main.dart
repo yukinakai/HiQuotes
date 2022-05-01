@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:hi_quotes/firebase_options.dart';
-import 'package:hi_quotes/quotes_list_screen.dart';
+// import 'package:hi_quotes/quotes_list_screen.dart';
+import 'package:hi_quotes/quote_add_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Hi Quotes',
       theme: ThemeData(fontFamily: 'Noto Sans JP'),
-      home: const QuotesListScreen(),
+      home: const QuoteAddScreen(),
     );
   }
 }
