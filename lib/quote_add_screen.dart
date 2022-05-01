@@ -5,47 +5,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:hi_quotes/quotes_list_screen.dart';
 
-import 'package:receive_sharing_intent/receive_sharing_intent.dart';
-
 
 class QuoteAddScreen extends StatefulWidget {
-  const QuoteAddScreen({Key? key}) : super(key: key);
+  final String? defaultContent;
+  const QuoteAddScreen({Key? key, this.defaultContent}) : super(key: key);
 
   @override
   State<QuoteAddScreen> createState() => _QuoteAddScreenState();
 }
 
 class _QuoteAddScreenState extends State<QuoteAddScreen> {
-  late StreamSubscription _intentDataStreamSubscription;
   String title = '';
   String url = '';
   String content = '';
-
-  @override
-  void initState() {
-    super.initState();
-    // For sharing or opening urls/text coming from outside the app while the app is in the memory
-    _intentDataStreamSubscription =
-        ReceiveSharingIntent.getTextStream().listen((String value) {
-      setState(() {
-        content = value;
-      });
-    }, onError: (err) {
-      // print("getLinkStream error: $err");
-    });
-    // For sharing or opening urls/text coming from outside the app while the app is closed
-    ReceiveSharingIntent.getInitialText().then((String? value) {
-      setState(() {
-        content = value ?? '';
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    _intentDataStreamSubscription.cancel();
-    super.dispose();
-  }
 
   Future _showAlertDialog(BuildContext context) async {
     return showDialog<void>(
@@ -64,32 +36,29 @@ class _QuoteAddScreenState extends State<QuoteAddScreen> {
   }
 
   void addQuotes() {
-    FirebaseAuth.instance
-      .authStateChanges()
-      .listen((User? user) {
-    if (user == null) {
-      _showAlertDialog(context);
-      print("user not found");
-    } else {
-      CollectionReference quotes =
-        FirebaseFirestore.instance.collection('quotes');
-      final uid = user.uid;
-      final now = DateTime.now().toUtc();
-      quotes
-        .add({
-          'user_id': uid,
-          'title': title,
-          'url': url,
-          'content': content,
-          'created_at': now,
-          'updated_at': now,
-        })
-        .then((value) => Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    const QuotesListScreen())))
-        .catchError((error) => _showAlertDialog(context));
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      if (user == null) {
+        _showAlertDialog(context);
+        print("user not found");
+      } else {
+        CollectionReference quotes =
+            FirebaseFirestore.instance.collection('quotes');
+        final uid = user.uid;
+        final now = DateTime.now().toUtc();
+        quotes
+            .add({
+              'user_id': uid,
+              'title': title,
+              'url': url,
+              'content': content,
+              'created_at': now,
+              'updated_at': now,
+            })
+            .then((value) => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const QuotesListScreen())))
+            .catchError((error) => _showAlertDialog(context));
       }
     });
   }
@@ -154,94 +123,95 @@ class _QuoteAddScreenState extends State<QuoteAddScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: KeyboardActions(
-          config: _buildConfig(context),
-          child: SingleChildScrollView(
-            child: Container(
-              margin: const EdgeInsets.only(top: 64, right: 32, left: 32),
-              child: Column(
-                children: <Widget>[
-                  TextFormField(
-                    decoration: const InputDecoration(
-                      hintText: '記事タイトル',
-                      labelText: '記事タイトル',
-                    ),
-                    onChanged: (String value) {
-                      setState(() {
-                        title = value;
-                      });
-                    },
-                    autofocus: true,
-                    focusNode: _nodeText1,
-                    textInputAction: TextInputAction.next,
+        body: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: KeyboardActions(
+                config: _buildConfig(context),
+                child: SingleChildScrollView(
+                    child: Container(
+                  margin: const EdgeInsets.only(top: 64, right: 32, left: 32),
+                  child: Column(
+                    children: <Widget>[
+                      TextFormField(
+                        decoration: const InputDecoration(
+                          hintText: '記事タイトル',
+                          labelText: '記事タイトル',
+                        ),
+                        onChanged: (String value) {
+                          setState(() {
+                            title = value;
+                          });
+                        },
+                        autofocus: true,
+                        focusNode: _nodeText1,
+                        textInputAction: TextInputAction.next,
+                      ),
+                      const SizedBox(height: 8),
+                      TextFormField(
+                        decoration: const InputDecoration(
+                          hintText: 'URL',
+                          labelText: 'URL',
+                        ),
+                        onChanged: (String value) {
+                          setState(() {
+                            url = value;
+                          });
+                        },
+                        focusNode: _nodeText2,
+                        textInputAction: TextInputAction.next,
+                      ),
+                      const SizedBox(height: 8),
+                      TextFormField(
+                        keyboardType: TextInputType.multiline,
+                        maxLines: null,
+                        controller: TextEditingController(
+                          text: widget.defaultContent
+                        ),
+                        decoration: const InputDecoration(
+                          hintText: '内容',
+                          labelText: '内容',
+                        ),
+                        onChanged: (String value) {
+                          setState(() {
+                            content = value;
+                          });
+                        },
+                        focusNode: _nodeText3,
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 8),
-                  TextFormField(
-                    decoration: const InputDecoration(
-                      hintText: 'URL',
-                      labelText: 'URL',
-                    ),
-                    onChanged: (String value) {
-                      setState(() {
-                        url = value;
-                      });
-                    },
-                    focusNode: _nodeText2,
-                    textInputAction: TextInputAction.next,
-                  ),
-                  const SizedBox(height: 8),
-                  TextFormField(
-                    keyboardType: TextInputType.multiline,
-                    maxLines: null,
-                    controller: TextEditingController(text: content),
-                    decoration: const InputDecoration(
-                      hintText: '内容',
-                      labelText: '内容',
-                    ),
-                    onChanged: (String value) {
-                      setState(() {
-                        content = value;
-                      });
-                    },
-                    focusNode: _nodeText3,
-                  ),
-                ],
+                )))),
+        bottomNavigationBar: BottomAppBar(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              IconButton(
+                padding: const EdgeInsets.only(top: 8, left: 24, bottom: 32),
+                iconSize: 32,
+                icon: const Icon(Icons.arrow_back_ios_new),
+                alignment: Alignment.bottomLeft,
+                onPressed: () => {
+                  if (Navigator.canPop(context))
+                    {Navigator.pop(context)}
+                  else
+                    {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const QuotesListScreen(),
+                          ))
+                    }
+                },
               ),
-            )
-          )
-        )
-      ),
-      bottomNavigationBar: BottomAppBar(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            IconButton(
-              padding: const EdgeInsets.only(top: 8, left: 24, bottom: 32),
-              iconSize: 32,
-              icon: const Icon(Icons.arrow_back_ios_new),
-              alignment: Alignment.bottomLeft,
-              onPressed: () => {
-                if (Navigator.canPop(context)) {
-                  Navigator.pop(context)
-                } else {
-                    Navigator.push(context,
-                      MaterialPageRoute(
-                        builder: (context) => const  QuotesListScreen(),
-                      ))
-                }
-              },
-            ),
-            IconButton(
-              padding: const EdgeInsets.only(top: 8, right: 24, bottom: 32),
-              iconSize: 32,
-              icon: const Icon(Icons.add_task),
-              onPressed: () => addQuotes(),
-            ),
-          ],
-        ),
-      ));
+              IconButton(
+                padding: const EdgeInsets.only(top: 8, right: 24, bottom: 32),
+                iconSize: 32,
+                icon: const Icon(Icons.add_task),
+                onPressed: () => addQuotes(),
+              ),
+            ],
+          ),
+        ));
   }
 }
