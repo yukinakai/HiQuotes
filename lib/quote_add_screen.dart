@@ -189,7 +189,10 @@ class _QuoteAddScreenState extends State<QuoteAddScreen> {
               IconButton(
                 padding: const EdgeInsets.only(top: 8, left: 24, bottom: 32),
                 iconSize: 32,
-                icon: const Icon(Icons.arrow_back_ios_new),
+                icon: Icon(
+                  Icons.arrow_back_ios_new,
+                  color: Colors.grey[600],
+                ),
                 alignment: Alignment.bottomLeft,
                 onPressed: () => {
                   if (Navigator.canPop(context))
@@ -207,7 +210,10 @@ class _QuoteAddScreenState extends State<QuoteAddScreen> {
               IconButton(
                 padding: const EdgeInsets.only(top: 8, right: 24, bottom: 32),
                 iconSize: 32,
-                icon: const Icon(Icons.add_task),
+                icon: Icon(
+                  Icons.add_task,
+                  color: Colors.grey[600],
+                ),
                 onPressed: () => addQuotes(),
               ),
             ],
