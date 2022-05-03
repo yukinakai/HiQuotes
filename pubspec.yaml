@@ -64,7 +64,7 @@ flutter:
   fonts:
     - family: TwitterLogo
       fonts:
-        - asset: assets/icons/twitter_logo/TwitterLogo.ttf
+        - asset: assets/icons/twitter_logo_white/TwitterLogoWhite.ttf
 
 
   # The following line ensures that the Material Icons font is
