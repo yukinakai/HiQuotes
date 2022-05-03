@@ -1,9 +1,19 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:hi_quotes/icons/twitter_logo_white_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class QuoteDetailScreen extends StatelessWidget {
   const QuoteDetailScreen({ Key? key }) : super(key: key);
+
+
+  void _launchUrl(url) async {
+    if (!await launchUrl(
+      url,
+      mode: LaunchMode.externalApplication,
+    )) throw 'Could not launch $url';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,13 +35,33 @@ class QuoteDetailScreen extends StatelessWidget {
               padding: const EdgeInsets.only(top: 28),
             ),
             const SizedBox(height: 8),
-            Text(
-              "https://note.com/brand_builder01/n/n2613891a49c0",
-              style: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 12,
+            InkWell(
+              child: const Text(
+                  "https://note.com/brand_builder01/n/n2613891a49c0",
+                  style: TextStyle(
+                    color: Colors.blue,
+                    fontSize: 12,
+                    decoration: TextDecoration.underline
+                  ),
+                ),
+              onTap: () => _launchUrl(
+                Uri.parse("https://note.com/brand_builder01/n/n2613891a49c0")
               ),
+
             ),
+            // TextButton(
+            //   onPressed: () => _launchUrl(
+            //     Uri.parse("https://note.com/brand_builder01/n/n2613891a49c0")
+            //   ),
+            //   child:
+            //     Text(
+            //       "https://note.com/brand_builder01/n/n2613891a49c0",
+            //       style: TextStyle(
+            //         color: Colors.grey[600],
+            //         fontSize: 12,
+            //       ),
+            //     ),
+            // ),
             const SizedBox(height: 8),
             Text(
               "2021/10/20 22:57",
