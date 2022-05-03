@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hi_quotes/icons/twitter_logo_white_icons.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class QuoteDetailScreen extends StatelessWidget {
   const QuoteDetailScreen({ Key? key }) : super(key: key);
@@ -63,7 +65,7 @@ class QuoteDetailScreen extends StatelessWidget {
       ]),
       floatingActionButton: FloatingActionButton(
         onPressed: () => {},
-        child: Image.asset('assets/images/twitter.png'),
+        child: const Icon(TwitterLogoWhite.twitterLogoWhite),
         backgroundColor: Colors.blue,
       ),
       bottomNavigationBar: BottomAppBar(
