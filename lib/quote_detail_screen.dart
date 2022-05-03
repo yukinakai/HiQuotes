@@ -47,21 +47,7 @@ class QuoteDetailScreen extends StatelessWidget {
               onTap: () => _launchUrl(
                 Uri.parse("https://note.com/brand_builder01/n/n2613891a49c0")
               ),
-
             ),
-            // TextButton(
-            //   onPressed: () => _launchUrl(
-            //     Uri.parse("https://note.com/brand_builder01/n/n2613891a49c0")
-            //   ),
-            //   child:
-            //     Text(
-            //       "https://note.com/brand_builder01/n/n2613891a49c0",
-            //       style: TextStyle(
-            //         color: Colors.grey[600],
-            //         fontSize: 12,
-            //       ),
-            //     ),
-            // ),
             const SizedBox(height: 8),
             Text(
               "2021/10/20 22:57",
