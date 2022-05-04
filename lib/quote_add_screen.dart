@@ -165,9 +165,7 @@ class _QuoteAddScreenState extends State<QuoteAddScreen> {
                       TextFormField(
                         keyboardType: TextInputType.multiline,
                         maxLines: null,
-                        controller: TextEditingController(
-                          text: widget.defaultContent
-                        ),
+                        initialValue: widget.defaultContent,
                         decoration: const InputDecoration(
                           hintText: '内容',
                           labelText: '内容',
