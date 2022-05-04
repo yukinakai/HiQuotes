@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:hi_quotes/quote_add_screen.dart';
-
+import 'package:hi_quotes/quote_detail_screen.dart';
 import 'dart:async';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
@@ -114,7 +114,7 @@ class _QuotesListScreenState extends State<QuotesListScreen> {
               itemBuilder: (_, index) {
                 if (index < _data.length) {
                   final DocumentSnapshot document = _data[index];
-                  String updateAt = DateFormat('yyyy/MM/dd H:m:s')
+                  String updatedAt = DateFormat('yyyy/MM/dd H:m:s')
                       .format(document.get('updated_at').toDate().toLocal());
                   return Column(children: <Widget>[
                     ListTile(
@@ -126,12 +126,23 @@ class _QuotesListScreenState extends State<QuotesListScreen> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      subtitle: Text(document.get('title') + '\n' + updateAt),
+                      subtitle: Text(document.get('title') + '\n' + updatedAt),
                       contentPadding: const EdgeInsets.symmetric(
                         vertical: 8,
                         horizontal: 16,
                       ),
-                      onTap: () => {},
+                      onTap: () => {
+                        Navigator.push(context,
+                          MaterialPageRoute(builder:
+                            (context) => QuoteDetailScreen(
+                              title: document.get('title'),
+                              url: document.get('url'),
+                              content: document.get('content'),
+                              updatedAt: updatedAt,
+                            )
+                          )
+                        )
+                      },
                     ),
                     const Divider(
                       thickness: 6,

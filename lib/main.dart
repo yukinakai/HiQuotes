@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:hi_quotes/firebase_options.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hi_quotes/quotes_list_screen.dart';
 
 Future<void> main() async {
@@ -23,7 +24,9 @@ class MyApp extends StatelessWidget {
     });
     return MaterialApp(
       title: 'Hi Quotes',
-      theme: ThemeData(fontFamily: 'Noto Sans JP'),
+      theme: ThemeData(
+        textTheme: GoogleFonts.mPlus1TextTheme()
+      ),
       home: const QuotesListScreen(),
     );
   }
