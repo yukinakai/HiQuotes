@@ -102,7 +102,7 @@ class _QuotesListScreenState extends State<QuotesListScreen> {
         appBar: AppBar(
             centerTitle: false,
             title: Image.asset(
-              'assets/images/Logo.jpg',
+              'assets/images/Logo.png',
               height: 32,
             ),
             backgroundColor: Colors.white,
