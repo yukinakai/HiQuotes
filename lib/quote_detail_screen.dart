@@ -7,11 +7,13 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class QuoteDetailScreen extends StatefulWidget {
-  final String title, url, content, updatedAt;
+  final String id, title, url, content, updatedAt;
   const QuoteDetailScreen({
     Key? key,
+    required this.id,
     required this.title,
     required this.url,
     required this.content,
@@ -38,121 +40,122 @@ class _QuoteDetailScreenState extends State<QuoteDetailScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-          child: Stack(children: [
-        RepaintBoundary(
+        child: Stack(children: [
+          RepaintBoundary(
             key: _globalKey,
-            child: Row(children: [
-              Container(
-                height: 540,
-                width: 540,
-                padding: const EdgeInsets.all(40),
-                color: Colors.brown[50],
-                child: Column(children: [
-                  Container(
-                    height: 388,
+            child: Container(
+              height: 315,
+              width: 600,
+              padding: const EdgeInsets.all(24),
+              color: Colors.brown[50],
+              child: Column(children: [
+                Container(
+                  // color: Colors.red,
+                  height: 211,
+                  width: double.infinity,
+                  margin: const EdgeInsets.only(bottom: 8),
+                  child: AutoSizeText(
+                    widget.content,
+                    style: TextStyle(
+                      fontSize: 1000,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueGrey[900],
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 12,
+                    minFontSize: 12,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Container(
+                    // color: Colors.green,
+                    height: 24,
                     width: double.infinity,
-                    margin: const EdgeInsets.only(bottom: 8),
-                    child: AutoSizeText(
-                      widget.content,
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      widget.title,
                       style: TextStyle(
-                        fontSize: 1000,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
                         color: Colors.blueGrey[900],
                       ),
-                      textAlign: TextAlign.center,
-                      maxLines: 30,
-                      minFontSize: 12,
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
+                    )),
+                Container(
+                    // color: Colors.blue,
+                    width: double.infinity,
+                    alignment: Alignment.bottomRight,
+                    child: Image.asset(
+                      'assets/images/Logo.png',
+                      height: 24,
+                    )),
+              ]),
+            ),
+          ),
+          Column(children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              color: Colors.grey[100],
+              width: double.infinity,
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.only(top: 28),
+                    child: Text(
+                      widget.title,
+                      style: TextStyle(
+                        color: Colors.blueGrey[900],
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
-                  Container(
-                      height: 32,
-                      width: double.infinity,
-                      margin: const EdgeInsets.only(bottom: 8),
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        widget.title,
-                        style: TextStyle(
+                  const SizedBox(height: 8),
+                  InkWell(
+                    child: Text(
+                      widget.url,
+                      style: const TextStyle(
+                          color: Colors.blue,
                           fontSize: 12,
-                          color: Colors.blueGrey[900],
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      )),
-                  Container(
-                      width: double.infinity,
-                      alignment: Alignment.bottomRight,
-                      child: Image.asset(
-                        'assets/images/Logo.png',
-                        height: 24,
-                      )),
-                ]),
-              ),
-            ])),
-        Column(children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            color: Colors.grey[100],
-            width: double.infinity,
-            child: Column(
-              children: [
-                Container(
-                  padding: const EdgeInsets.only(top: 28),
-                  child: Text(
-                    widget.title,
+                          decoration: TextDecoration.underline),
+                    ),
+                    onTap: () => _launchUrl(Uri.parse(widget.url)),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    widget.updatedAt,
                     style: TextStyle(
-                      color: Colors.blueGrey[900],
-                      fontWeight: FontWeight.bold,
+                      color: Colors.grey[600],
                       fontSize: 12,
                     ),
                   ),
-                ),
-                const SizedBox(height: 8),
-                InkWell(
-                  child: Text(
-                    widget.url,
-                    style: const TextStyle(
-                        color: Colors.blue,
-                        fontSize: 12,
-                        decoration: TextDecoration.underline),
-                  ),
-                  onTap: () => _launchUrl(Uri.parse(widget.url)),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  widget.updatedAt,
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-              child: SingleChildScrollView(
-                  child: Column(children: [
-            Container(
-              color: Colors.white,
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-              child: Text(
-                widget.content,
-                style: TextStyle(
-                  color: Colors.blueGrey[900],
-                  fontSize: 24,
-                ),
-                textAlign: TextAlign.center,
+                ],
               ),
             ),
-            Container(
-              color: Colors.white,
-              width: double.infinity,
-              height: 500,
-            ),
-            Container(child: _image)
-          ]))),
-        ])
+            Expanded(
+                child: SingleChildScrollView(
+                    child: Column(children: [
+              Container(
+                color: Colors.white,
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+                child: Text(
+                  widget.content,
+                  style: TextStyle(
+                    color: Colors.blueGrey[900],
+                    fontSize: 24,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Container(
+                color: Colors.white,
+                width: double.infinity,
+                height: 500,
+              ),
+              Container(child: _image)
+            ]))),
+          ])
       ])),
       floatingActionButton: FloatingActionButton(
         onPressed: () => {_doCapture()},
@@ -215,6 +218,24 @@ class _QuoteDetailScreenState extends State<QuoteDetailScreen> {
     ByteData byteData =
         await image.toByteData(format: ui.ImageByteFormat.png) as ByteData;
     var pngBytes = byteData.buffer.asUint8List();
+    _uploadImage(pngBytes);
     return Image.memory(pngBytes);
+  }
+
+  Future<Uri?> _uploadImage(pngBytes) async {
+    final id = widget.id;
+    final ref = FirebaseStorage.instance.ref('ogp_images/$id.png');
+    try {
+      await ref.putData(
+        pngBytes,
+        SettableMetadata(
+          contentType: 'image/png',
+        ),
+      );
+      return Uri.parse(
+          'https://storage.googleapis.com/${ref.bucket}/ogp_images/$id.png');
+    } on FirebaseException catch (e) {
+      print('OGP Image Upload Error = $e');
+    }
   }
 }
