@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:hi_quotes/icons/twitter_logo_white_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'dart:async';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 
-class QuoteDetailScreen extends StatelessWidget {
+class QuoteDetailScreen extends StatefulWidget {
   final String title, url, content, updatedAt;
   const QuoteDetailScreen({
     Key? key,
@@ -11,6 +17,14 @@ class QuoteDetailScreen extends StatelessWidget {
     required this.content,
     required this.updatedAt,
   }) : super(key: key);
+
+  @override
+  State<QuoteDetailScreen> createState() => _QuoteDetailScreenState();
+}
+
+class _QuoteDetailScreenState extends State<QuoteDetailScreen> {
+  final GlobalKey _globalKey = GlobalKey();
+  Image? _image;
 
   void _launchUrl(url) async {
     if (!await launchUrl(
@@ -24,62 +38,124 @@ class QuoteDetailScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-          child: Column(children: [
-        Container(
-          padding: const EdgeInsets.all(16),
-          color: Colors.grey[100],
-          width: double.infinity,
-          child: Column(
-            children: [
+          child: Stack(children: [
+        RepaintBoundary(
+            key: _globalKey,
+            child: Row(children: [
               Container(
-                padding: const EdgeInsets.only(top: 28),
-                child: Text(
-                  title,
+                height: 540,
+                width: 540,
+                padding: const EdgeInsets.all(40),
+                color: Colors.brown[50],
+                child: Column(children: [
+                  Container(
+                    height: 388,
+                    width: double.infinity,
+                    margin: const EdgeInsets.only(bottom: 8),
+                    child: AutoSizeText(
+                      widget.content,
+                      style: TextStyle(
+                        fontSize: 1000,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blueGrey[900],
+                      ),
+                      textAlign: TextAlign.center,
+                      maxLines: 30,
+                      minFontSize: 12,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Container(
+                      height: 32,
+                      width: double.infinity,
+                      margin: const EdgeInsets.only(bottom: 8),
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        widget.title,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.blueGrey[900],
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      )),
+                  Container(
+                      width: double.infinity,
+                      alignment: Alignment.bottomRight,
+                      child: Image.asset(
+                        'assets/images/Logo.png',
+                        height: 24,
+                      )),
+                ]),
+              ),
+            ])),
+        Column(children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            color: Colors.grey[100],
+            width: double.infinity,
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.only(top: 28),
+                  child: Text(
+                    widget.title,
+                    style: TextStyle(
+                      color: Colors.blueGrey[900],
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                InkWell(
+                  child: Text(
+                    widget.url,
+                    style: const TextStyle(
+                        color: Colors.blue,
+                        fontSize: 12,
+                        decoration: TextDecoration.underline),
+                  ),
+                  onTap: () => _launchUrl(Uri.parse(widget.url)),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  widget.updatedAt,
                   style: TextStyle(
-                    color: Colors.blueGrey[900],
-                    fontWeight: FontWeight.bold,
+                    color: Colors.grey[600],
                     fontSize: 12,
                   ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              InkWell(
-                child: Text(
-                  url,
-                  style: const TextStyle(
-                      color: Colors.blue,
-                      fontSize: 12,
-                      decoration: TextDecoration.underline),
-                ),
-                onTap: () => _launchUrl(Uri.parse(url)),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                "2021/10/20 22:57",
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 12,
-                ),
-              ),
-            ],
-          ),
-        ),
-        Expanded(
-            child: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-            child: Text(
-              content,
-              style: TextStyle(
-                color: Colors.blueGrey[900],
-                fontSize: 24,
-              ),
+              ],
             ),
           ),
-        ))
+          Expanded(
+              child: SingleChildScrollView(
+                  child: Column(children: [
+            Container(
+              color: Colors.white,
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+              child: Text(
+                widget.content,
+                style: TextStyle(
+                  color: Colors.blueGrey[900],
+                  fontSize: 24,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            Container(
+              color: Colors.white,
+              width: double.infinity,
+              height: 500,
+            ),
+            Container(child: _image)
+          ]))),
+        ])
       ])),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => {},
+        onPressed: () => {_doCapture()},
         child: const Icon(TwitterLogoWhite.twitterLogoWhite),
         backgroundColor: Colors.blue,
       ),
@@ -121,5 +197,24 @@ class QuoteDetailScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _doCapture() async {
+    setState(() {});
+    await Future.delayed(const Duration(milliseconds: 100));
+    var image = await _convertWidgetToImage();
+    setState(() {
+      _image = image;
+    });
+  }
+
+  Future<Image> _convertWidgetToImage() async {
+    RenderRepaintBoundary boundary =
+        _globalKey.currentContext?.findRenderObject() as RenderRepaintBoundary;
+    ui.Image image = await boundary.toImage(pixelRatio: 3.0);
+    ByteData byteData =
+        await image.toByteData(format: ui.ImageByteFormat.png) as ByteData;
+    var pngBytes = byteData.buffer.asUint8List();
+    return Image.memory(pngBytes);
   }
 }
