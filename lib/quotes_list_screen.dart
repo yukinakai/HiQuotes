@@ -135,6 +135,7 @@ class _QuotesListScreenState extends State<QuotesListScreen> {
                         Navigator.push(context,
                           MaterialPageRoute(builder:
                             (context) => QuoteDetailScreen(
+                              id: document.id,
                               title: document.get('title'),
                               url: document.get('url'),
                               content: document.get('content'),
