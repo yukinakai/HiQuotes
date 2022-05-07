@@ -63,16 +63,16 @@ class _QuotesListScreenState extends State<QuotesListScreen> {
         if (_lastVisible == null) {
           data = await FirebaseFirestore.instance
               .collection('quotes')
-              .where('user_id', isEqualTo: uid)
-              .orderBy('updated_at', descending: true)
+              .where('userId', isEqualTo: uid)
+              .orderBy('updatedAt', descending: true)
               .limit(10)
               .get();
         } else {
           data = await FirebaseFirestore.instance
               .collection('quotes')
-              .where('user_id', isEqualTo: uid)
-              .orderBy('updated_at', descending: true)
-              .startAfter([_lastVisible!['updated_at']])
+              .where('userId', isEqualTo: uid)
+              .orderBy('updatedAt', descending: true)
+              .startAfter([_lastVisible!['updatedAt']])
               .limit(10)
               .get();
         }
@@ -115,7 +115,7 @@ class _QuotesListScreenState extends State<QuotesListScreen> {
                 if (index < _data.length) {
                   final DocumentSnapshot document = _data[index];
                   String updatedAt = DateFormat('yyyy/MM/dd H:m:s')
-                      .format(document.get('updated_at').toDate().toLocal());
+                      .format(document.get('updatedAt').toDate().toLocal());
                   return Column(children: <Widget>[
                     ListTile(
                       title: Text(

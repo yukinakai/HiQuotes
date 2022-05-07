@@ -47,12 +47,12 @@ class _QuoteAddScreenState extends State<QuoteAddScreen> {
         final now = DateTime.now().toUtc();
         quotes
             .add({
-              'user_id': uid,
+              'userId': uid,
               'title': title,
               'url': url,
               'content': content,
-              'created_at': now,
-              'updated_at': now,
+              'createdAt': now,
+              'updatedAt': now,
             })
             .then((value) => Navigator.push(
                 context,
