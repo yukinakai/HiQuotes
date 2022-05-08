@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hi_quotes/widget/tweet_share_widget.dart';
 
 class QuoteDetailScreen extends StatefulWidget {
   final String id, title, url, content, updatedAt;
@@ -159,21 +160,26 @@ class _QuoteDetailScreenState extends State<QuoteDetailScreen> {
           ]))),
         ])
       ])),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          setState(() {});
-          await Future.delayed(const Duration(milliseconds: 100));
-          _convertWidgetToImage().then(((value) {
-            _getImageUrl(value).then((value) {
-              if (value != null) {
-                _buildDynamicUrl(value);
-              }
-            });
-          }));
-        },
-        child: const Icon(TwitterLogoWhite.twitterLogoWhite),
-        backgroundColor: Colors.blue,
+      floatingActionButton: TwitterShareWidget(
+        imageWidgetKey: _globalKey,
+        id: widget.id,
+        content: widget.content,
       ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () async {
+      //     setState(() {});
+      //     await Future.delayed(const Duration(milliseconds: 100));
+      //     _convertWidgetToImage().then(((value) {
+      //       _getImageUrl(value).then((value) {
+      //         if (value != null) {
+      //           _buildDynamicUrl(value);
+      //         }
+      //       });
+      //     }));
+      //   },
+      //   child: const Icon(TwitterLogoWhite.twitterLogoWhite),
+      //   backgroundColor: Colors.blue,
+      // ),
       bottomNavigationBar: BottomAppBar(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
