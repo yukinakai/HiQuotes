@@ -109,7 +109,6 @@ class _TwitterShareWidgetState extends State<TwitterShareWidget> {
       iosParameters: const IOSParameters(bundleId: "com.example.hiQuotes"),
       socialMetaTagParameters: SocialMetaTagParameters(
         title: 'HiQuotes',
-        description: widget.title,
         imageUrl: imageUrl,
       ),
     );
