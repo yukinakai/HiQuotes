@@ -7,17 +7,16 @@ import 'dart:ui' as ui;
 import 'package:flutter/rendering.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class TwitterShareWidget extends StatefulWidget {
   final GlobalKey imageWidgetKey;
   final String id;
-  final String content;
+  final String title;
   const TwitterShareWidget({
     Key? key,
     required this.imageWidgetKey,
     required this.id,
-    required this.content,
+    required this.title,
   }) : super(key: key);
 
   @override
@@ -48,9 +47,9 @@ class _TwitterShareWidgetState extends State<TwitterShareWidget> {
 
   void _tweet(Uri imageUrl) async {
     final Map<String, dynamic> tweetQuery = {
-      "text": "@hiquotes",
-      "url": imageUrl,
-      "hashtags": "#HiQuotes",
+      "text": "@HiQuotesApp \n",
+      "url": imageUrl.toString(),
+      "hashtags": "HiQuotes",
     };
 
     final Uri tweetScheme =
@@ -61,12 +60,15 @@ class _TwitterShareWidgetState extends State<TwitterShareWidget> {
 
     await canLaunchUrl(tweetScheme)
         ? await launchUrl(tweetScheme)
-        : await launchUrl(tweetIntentUrl);
+        : await launchUrl(
+            tweetIntentUrl,
+            mode: LaunchMode.externalApplication,
+          );
   }
 
   Future<Uint8List> _convertWidgetToImage() async {
-    RenderRepaintBoundary boundary =
-        widget.imageWidgetKey.currentContext?.findRenderObject() as RenderRepaintBoundary;
+    RenderRepaintBoundary boundary = widget.imageWidgetKey.currentContext
+        ?.findRenderObject() as RenderRepaintBoundary;
     ui.Image image = await boundary.toImage(pixelRatio: 3.0);
     ByteData byteData =
         await image.toByteData(format: ui.ImageByteFormat.png) as ByteData;
@@ -80,22 +82,7 @@ class _TwitterShareWidgetState extends State<TwitterShareWidget> {
     final ref = FirebaseStorage.instance.ref('ogp_images/$id.png');
     final String imageUrl;
     try {
-      DocumentReference quote =
-          FirebaseFirestore.instance.collection('quotes').doc(widget.id);
-      quote.get().then((DocumentSnapshot snapshot) => {
-            if (snapshot.data().toString().contains('lastSharedAt'))
-              {
-                if (snapshot
-                    .get('updatedAt')
-                    .toDate()
-                    .isAfter(snapshot.get('lastSharedAt').toDate()))
-                  {_uploadImage(ref, imageData)}
-              }
-            else
-              {_uploadImage(ref, imageData)}
-          });
-      quote.update({'lastSharedAt': DateTime.now().toUtc()}).catchError(
-          (error) => {print(error)});
+      _uploadImage(ref, imageData);
       imageUrl =
           'https://firebasestorage.googleapis.com/v0/b/${ref.bucket}/o/ogp_images%2F$id.png?alt=media';
       print('OGP Image Upload Url = $imageUrl');
@@ -122,7 +109,7 @@ class _TwitterShareWidgetState extends State<TwitterShareWidget> {
       iosParameters: const IOSParameters(bundleId: "com.example.hiQuotes"),
       socialMetaTagParameters: SocialMetaTagParameters(
         title: 'HiQuotes',
-        description: widget.content,
+        description: widget.title,
         imageUrl: imageUrl,
       ),
     );
