@@ -4,6 +4,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:hi_quotes/quotes_list_screen.dart';
+import 'package:hi_quotes/widget/tweet_share_widget.dart';
+import 'package:hi_quotes/widget/share_image_widget.dart';
+
 
 
 class QuoteAddScreen extends StatefulWidget {
@@ -15,24 +18,25 @@ class QuoteAddScreen extends StatefulWidget {
 }
 
 class _QuoteAddScreenState extends State<QuoteAddScreen> {
+  final GlobalKey _globalKey = GlobalKey();
   String title = '';
   String url = '';
   String content = '';
 
   Future _showAlertDialog(BuildContext context) async {
     return showDialog<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-              title: const Text('エラー'),
-              content: const Text('エラー'),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('OK'),
-                )
-              ]);
-        });
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('エラー'),
+          content: const Text('エラー'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            )
+          ]);
+      });
   }
 
   void addQuotes() {
@@ -46,19 +50,19 @@ class _QuoteAddScreenState extends State<QuoteAddScreen> {
         final uid = user.uid;
         final now = DateTime.now().toUtc();
         quotes
-            .add({
-              'userId': uid,
-              'title': title,
-              'url': url,
-              'content': content,
-              'createdAt': now,
-              'updatedAt': now,
-            })
-            .then((value) => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const QuotesListScreen())))
-            .catchError((error) => _showAlertDialog(context));
+          .add({
+            'userId': uid,
+            'title': title,
+            'url': url,
+            'content': content,
+            'createdAt': now,
+            'updatedAt': now,
+          })
+          .then((value) => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const QuotesListScreen())))
+          .catchError((error) => _showAlertDialog(context));
       }
     });
   }
@@ -68,118 +72,131 @@ class _QuoteAddScreenState extends State<QuoteAddScreen> {
   final FocusNode _nodeText3 = FocusNode();
   KeyboardActionsConfig _buildConfig(BuildContext context) {
     return KeyboardActionsConfig(
-        keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
-        keyboardBarColor: Colors.grey[200],
-        nextFocus: true,
-        actions: [
-          KeyboardActionsItem(focusNode: _nodeText1, toolbarButtons: [
-            (node) {
-              return GestureDetector(
-                onTap: () => node.unfocus(),
-                child: const Padding(
-                  padding: EdgeInsets.all(8),
-                  child: Text('閉じる'),
+      keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
+      keyboardBarColor: Colors.grey[200],
+      nextFocus: true,
+      actions: [
+        KeyboardActionsItem(focusNode: _nodeText1, toolbarButtons: [
+          (node) {
+            return GestureDetector(
+              onTap: () => node.unfocus(),
+              child: const Padding(
+                padding: EdgeInsets.all(8),
+                child: Text('閉じる'),
+              ),
+            );
+          }
+        ]),
+        KeyboardActionsItem(focusNode: _nodeText2, toolbarButtons: [
+          (node) {
+            return GestureDetector(
+              onTap: () => node.unfocus(),
+              child: const Padding(
+                padding: EdgeInsets.all(8),
+                child: Text('閉じる'),
+              ),
+            );
+          }
+        ]),
+        KeyboardActionsItem(focusNode: _nodeText3, toolbarButtons: [
+          (node) {
+            return GestureDetector(
+              onTap: () => node.unfocus(),
+              child: const Padding(
+                padding: EdgeInsets.all(8),
+                child: Text('閉じる'),
+              ),
+            );
+          },
+          (node) {
+            return GestureDetector(
+              onTap: () => addQuotes(),
+              child: const Padding(
+                padding: EdgeInsets.symmetric(
+                  vertical: 8,
+                  horizontal: 16,
                 ),
-              );
-            }
-          ]),
-          KeyboardActionsItem(focusNode: _nodeText2, toolbarButtons: [
-            (node) {
-              return GestureDetector(
-                onTap: () => node.unfocus(),
-                child: const Padding(
-                  padding: EdgeInsets.all(8),
-                  child: Text('閉じる'),
-                ),
-              );
-            }
-          ]),
-          KeyboardActionsItem(focusNode: _nodeText3, toolbarButtons: [
-            (node) {
-              return GestureDetector(
-                onTap: () => node.unfocus(),
-                child: const Padding(
-                  padding: EdgeInsets.all(8),
-                  child: Text('閉じる'),
-                ),
-              );
-            },
-            (node) {
-              return GestureDetector(
-                onTap: () => addQuotes(),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(
-                    vertical: 8,
-                    horizontal: 16,
-                  ),
-                  child: Text('登録'),
-                ),
-              );
-            },
-          ]),
-        ]);
+                child: Text('登録'),
+              ),
+            );
+          },
+        ]),
+      ]
+    );
   }
 
   @override
-  Widget build(BuildContext context) {
+    Widget build(BuildContext context) {
     return Scaffold(
-        body: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () => FocusScope.of(context).unfocus(),
-            child: KeyboardActions(
-                config: _buildConfig(context),
-                child: SingleChildScrollView(
-                    child: Container(
-                  margin: const EdgeInsets.only(top: 64, right: 32, left: 32),
-                  child: Column(
-                    children: <Widget>[
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          hintText: '記事タイトル',
-                          labelText: '記事タイトル',
-                        ),
-                        onChanged: (String value) {
-                          setState(() {
-                            title = value;
-                          });
-                        },
-                        autofocus: true,
-                        focusNode: _nodeText1,
-                        textInputAction: TextInputAction.next,
+      body: Stack(children: [
+        ShareImageWidget(
+          imageWidgetKey: _globalKey,
+          content: content,
+          title: title,
+        ),
+        Container(color: Colors.white,child:
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: KeyboardActions(
+            config: _buildConfig(context),
+            child: SingleChildScrollView(
+              child: Container(
+                margin: const EdgeInsets.only(top: 64, right: 32, left: 32),
+                child: Column(
+                  children: <Widget>[
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        hintText: '記事タイトル',
+                        labelText: '記事タイトル',
                       ),
-                      const SizedBox(height: 8),
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          hintText: 'URL',
-                          labelText: 'URL',
-                        ),
-                        onChanged: (String value) {
-                          setState(() {
-                            url = value;
-                          });
-                        },
-                        focusNode: _nodeText2,
-                        textInputAction: TextInputAction.next,
+                      onChanged: (String value) {
+                        setState(() {
+                          title = value;
+                        });
+                      },
+                      autofocus: true,
+                      focusNode: _nodeText1,
+                      textInputAction: TextInputAction.next,
+                    ),
+                    const SizedBox(height: 8),
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        hintText: 'URL',
+                        labelText: 'URL',
                       ),
-                      const SizedBox(height: 8),
-                      TextFormField(
-                        keyboardType: TextInputType.multiline,
-                        maxLines: null,
-                        initialValue: widget.defaultContent,
-                        decoration: const InputDecoration(
-                          hintText: '内容',
-                          labelText: '内容',
-                        ),
-                        onChanged: (String value) {
-                          setState(() {
-                            content = value;
-                          });
-                        },
-                        focusNode: _nodeText3,
+                      onChanged: (String value) {
+                        setState(() {
+                          url = value;
+                        });
+                      },
+                      focusNode: _nodeText2,
+                      textInputAction: TextInputAction.next,
+                    ),
+                    const SizedBox(height: 8),
+                    TextFormField(
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
+                      initialValue: widget.defaultContent,
+                      decoration: const InputDecoration(
+                        hintText: '内容',
+                        labelText: '内容',
                       ),
-                    ],
-                  ),
-                )))),
+                      onChanged: (String value) {
+                        setState(() {
+                          content = value;
+                        });
+                      },
+                      focusNode: _nodeText3,
+                    ),
+                  ],
+                ),
+              )))))]),
+      floatingActionButton: TwitterShareWidget(
+        imageWidgetKey: _globalKey,
+        title: title,
+      ),
+      resizeToAvoidBottomInset: false,
         bottomNavigationBar: BottomAppBar(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

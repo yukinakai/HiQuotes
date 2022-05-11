@@ -40,8 +40,8 @@ class _QuoteDetailScreenState extends State<QuoteDetailScreen> {
             content: widget.content,
             title: widget.title,
           ),
-        Column(children: [
-          Container(
+          Column(children: [
+            Container(
             padding: const EdgeInsets.all(16),
             color: Colors.grey[100],
             width: double.infinity,
@@ -80,7 +80,7 @@ class _QuoteDetailScreenState extends State<QuoteDetailScreen> {
               ],
             ),
           ),
-          Expanded(
+            Expanded(
               child: SingleChildScrollView(
                   child: Column(children: [
             Container(
@@ -103,8 +103,9 @@ class _QuoteDetailScreenState extends State<QuoteDetailScreen> {
             ),
             Container(child: _image)
           ]))),
+          ])
         ])
-      ])),
+      ),
       floatingActionButton: TwitterShareWidget(
         imageWidgetKey: _globalKey,
         id: widget.id,

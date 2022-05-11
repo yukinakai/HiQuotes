@@ -7,15 +7,16 @@ import 'dart:ui' as ui;
 import 'package:flutter/rendering.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+import 'package:uuid/uuid.dart';
 
 class TwitterShareWidget extends StatefulWidget {
   final GlobalKey imageWidgetKey;
-  final String id;
+  final String? id;
   final String title;
   const TwitterShareWidget({
     Key? key,
     required this.imageWidgetKey,
-    required this.id,
+    this.id,
     required this.title,
   }) : super(key: key);
 
@@ -78,7 +79,7 @@ class _TwitterShareWidgetState extends State<TwitterShareWidget> {
   }
 
   Future<Uri?> _getImageUrl(Uint8List imageData) async {
-    final id = widget.id;
+    final id = widget.id ?? const Uuid().v4();
     final ref = FirebaseStorage.instance.ref('ogp_images/$id.png');
     final String imageUrl;
     try {
