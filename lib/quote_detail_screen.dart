@@ -49,20 +49,21 @@ class _QuoteDetailScreenState extends State<QuoteDetailScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-          child: Stack(children: [
-        ShareImageWidget(
-          imageWidgetKey: _globalKey,
-          content: widget.content,
-          title: widget.title,
-        ),
-        QuoteDetailWidget(
-          title: widget.title,
-          url: widget.url,
-          content: widget.content,
-          updatedAt: widget.updatedAt,
-          image: _image
-        ),
-      ])),
+        child: Stack(children: [
+          ShareImageWidget(
+            imageWidgetKey: _globalKey,
+            content: widget.content,
+            title: widget.title,
+          ),
+          QuoteDetailWidget(
+            title: widget.title,
+            url: widget.url,
+            content: widget.content,
+            updatedAt: widget.updatedAt,
+            image: _image
+          ),
+        ])
+      ),
       floatingActionButton: TwitterShareWidget(
         imageWidgetKey: _globalKey,
         id: widget.quoteId,
