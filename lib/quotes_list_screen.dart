@@ -96,7 +96,7 @@ class _QuotesListScreenState extends State<QuotesListScreen> {
   @override
   Widget build(BuildContext context) {
     if (content.isNotEmpty) {
-      return QuoteAddScreen(defaultContent: content);
+      return QuoteAddScreen(initialContent: content);
     } else {
       return Scaffold(
         appBar: AppBar(
@@ -121,12 +121,22 @@ class _QuotesListScreenState extends State<QuotesListScreen> {
                       title: Text(
                         document.get('content'),
                         maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
                           color: Color.fromRGBO(0, 0, 0, 100),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      subtitle: Text(document.get('title') + '\n' + updatedAt),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children:[
+                          Text(
+                            document.get('title'),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(updatedAt),
+                        ]),
                       contentPadding: const EdgeInsets.symmetric(
                         vertical: 8,
                         horizontal: 16,
@@ -135,7 +145,7 @@ class _QuotesListScreenState extends State<QuotesListScreen> {
                         Navigator.push(context,
                           MaterialPageRoute(builder:
                             (context) => QuoteDetailScreen(
-                              id: document.id,
+                              quoteId: document.id,
                               title: document.get('title'),
                               url: document.get('url'),
                               content: document.get('content'),

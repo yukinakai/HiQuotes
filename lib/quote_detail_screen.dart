@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:hi_quotes/widget/tweet_share_widget.dart';
 import 'package:hi_quotes/widget/share_image_widget.dart';
+import 'package:hi_quotes/quote_add_screen.dart';
 
 class QuoteDetailScreen extends StatefulWidget {
-  final String id, title, url, content, updatedAt;
+  final String quoteId, title, url, content, updatedAt;
   const QuoteDetailScreen({
     Key? key,
-    required this.id,
+    required this.quoteId,
     required this.title,
     required this.url,
     required this.content,
@@ -108,7 +109,7 @@ class _QuoteDetailScreenState extends State<QuoteDetailScreen> {
       ),
       floatingActionButton: TwitterShareWidget(
         imageWidgetKey: _globalKey,
-        id: widget.id,
+        id: widget.quoteId,
         title: widget.title,
       ),
       bottomNavigationBar: BottomAppBar(
@@ -133,7 +134,17 @@ class _QuoteDetailScreenState extends State<QuoteDetailScreen> {
                 color: Colors.grey[600],
               ),
               alignment: Alignment.bottomLeft,
-              onPressed: () => {},
+              onPressed: () => {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => QuoteAddScreen(
+                      quoteId: widget.quoteId,
+                      initialTitle: widget.title,
+                      initialUrl: widget.url,
+                      initialContent: widget.content,
+                    )))
+              },
             ),
             IconButton(
               padding: const EdgeInsets.only(top: 8, right: 24, bottom: 32),
