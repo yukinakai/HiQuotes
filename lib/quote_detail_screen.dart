@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hi_quotes/quotes_list_screen.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:hi_quotes/widget/tweet_share_widget.dart';
 import 'package:hi_quotes/widget/share_image_widget.dart';
 import 'package:hi_quotes/quote_add_screen.dart';
@@ -26,13 +25,6 @@ class QuoteDetailScreen extends StatefulWidget {
 class _QuoteDetailScreenState extends State<QuoteDetailScreen> {
   final GlobalKey _globalKey = GlobalKey();
   Image? _image;
-
-  void _launchUrl(url) async {
-    if (!await launchUrl(
-      url,
-      mode: LaunchMode.externalApplication,
-    )) throw 'Could not launch $url';
-  }
 
   void deleteQuote() {
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
