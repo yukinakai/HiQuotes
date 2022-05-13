@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:hi_quotes/quotes_list_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:hi_quotes/widget/tweet_share_widget.dart';
 import 'package:hi_quotes/widget/share_image_widget.dart';
 import 'package:hi_quotes/quote_add_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class QuoteDetailScreen extends StatefulWidget {
   final String quoteId, title, url, content, updatedAt;
@@ -30,19 +33,37 @@ class _QuoteDetailScreenState extends State<QuoteDetailScreen> {
     )) throw 'Could not launch $url';
   }
 
+  void deleteQuote() {
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      if (user == null) {
+        print("user not found");
+      } else {
+        DocumentReference quote =
+            FirebaseFirestore.instance.collection('quotes').doc(widget.quoteId);
+        quote
+            .delete()
+            .then((value) => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const QuotesListScreen())))
+            .catchError((error) => print(error));
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Stack(children: [
-          ShareImageWidget(
-            imageWidgetKey: _globalKey,
-            content: widget.content,
-            title: widget.title,
-          ),
-          Column(children: [
-            Container(
+          child: Stack(children: [
+        ShareImageWidget(
+          imageWidgetKey: _globalKey,
+          content: widget.content,
+          title: widget.title,
+        ),
+        Column(children: [
+          Container(
             padding: const EdgeInsets.all(16),
             color: Colors.grey[100],
             width: double.infinity,
@@ -81,7 +102,7 @@ class _QuoteDetailScreenState extends State<QuoteDetailScreen> {
               ],
             ),
           ),
-            Expanded(
+          Expanded(
               child: SingleChildScrollView(
                   child: Column(children: [
             Container(
@@ -104,9 +125,8 @@ class _QuoteDetailScreenState extends State<QuoteDetailScreen> {
             ),
             Container(child: _image)
           ]))),
-          ])
         ])
-      ),
+      ])),
       floatingActionButton: TwitterShareWidget(
         imageWidgetKey: _globalKey,
         id: widget.quoteId,
@@ -136,14 +156,14 @@ class _QuoteDetailScreenState extends State<QuoteDetailScreen> {
               alignment: Alignment.bottomLeft,
               onPressed: () => {
                 Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => QuoteAddScreen(
-                      quoteId: widget.quoteId,
-                      initialTitle: widget.title,
-                      initialUrl: widget.url,
-                      initialContent: widget.content,
-                    )))
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => QuoteAddScreen(
+                              quoteId: widget.quoteId,
+                              initialTitle: widget.title,
+                              initialUrl: widget.url,
+                              initialContent: widget.content,
+                            )))
               },
             ),
             IconButton(
@@ -154,7 +174,7 @@ class _QuoteDetailScreenState extends State<QuoteDetailScreen> {
                 color: Colors.grey[600],
               ),
               alignment: Alignment.bottomLeft,
-              onPressed: () => {},
+              onPressed: () => {deleteQuote()},
             ),
           ],
         ),
