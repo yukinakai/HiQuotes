@@ -75,7 +75,6 @@ class QuoteDetailWidget extends ConsumerWidget {
           width: double.infinity,
           height: 500,
         ),
-        Container(child: widget.image)
       ]))),
     ]);
   }

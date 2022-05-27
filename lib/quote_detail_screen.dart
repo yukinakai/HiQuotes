@@ -7,11 +7,8 @@ import 'package:hi_quotes/service/delete_quote.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hi_quotes/widget/quote_widget.dart';
 
-final imageKeyProvider = StateProvider<GlobalKey?>((ref) => null);
-
 class QuoteDetailScreen extends ConsumerWidget {
   final GlobalKey _globalKey = GlobalKey();
-  Image? _image;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -22,12 +19,7 @@ class QuoteDetailScreen extends ConsumerWidget {
       body: SafeArea(
           child: Stack(children: [
         ShareImageWidget(),
-        QuoteDetailWidget(
-            title: widget.title,
-            url: widget.url,
-            content: widget.content,
-            updatedAt: widget.updatedAt,
-            image: _image),
+        QuoteDetailWidget(),
       ])),
       floatingActionButton: TwitterShareWidget(
         imageWidgetKey: _globalKey,
@@ -60,12 +52,7 @@ class QuoteDetailScreen extends ConsumerWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => QuoteAddScreen(
-                              quoteId: widget.quoteId,
-                              initialTitle: widget.title,
-                              initialUrl: widget.url,
-                              initialContent: widget.content,
-                            )))
+                        builder: (context) => QuoteAddScreen()))
               },
             ),
             IconButton(

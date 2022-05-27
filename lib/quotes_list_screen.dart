@@ -95,7 +95,7 @@ class _QuotesListScreenState extends State<QuotesListScreen> {
   @override
   Widget build(BuildContext context) {
     if (content.isNotEmpty) {
-      return QuoteAddScreen(initialContent: content);
+      return QuoteAddScreen();
     } else {
       return Scaffold(
         appBar: AppBar(
@@ -126,7 +126,7 @@ class _QuotesListScreenState extends State<QuotesListScreen> {
         floatingActionButton: FloatingActionButton(
           onPressed: () => {
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const QuoteAddScreen()))
+                MaterialPageRoute(builder: (context) => QuoteAddScreen()))
           },
           child: const Icon(
             Icons.add,

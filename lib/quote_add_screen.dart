@@ -5,36 +5,21 @@ import 'package:hi_quotes/widget/tweet_share_widget.dart';
 import 'package:hi_quotes/widget/share_image_widget.dart';
 import 'package:hi_quotes/service/add_quote.dart';
 import 'package:hi_quotes/widget/quote_form_widget.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hi_quotes/widget/quote_widget.dart';
 
-class QuoteAddScreen extends StatefulWidget {
-  final String? quoteId, initialTitle, initialUrl, initialContent;
-  const QuoteAddScreen(
-      {Key? key,
-      this.quoteId,
-      this.initialTitle,
-      this.initialUrl,
-      this.initialContent})
-      : super(key: key);
+final imageKeyProvider = StateProvider<GlobalKey?>((ref) => null);
 
-  @override
-  State<QuoteAddScreen> createState() => _QuoteAddScreenState();
-}
-
-class _QuoteAddScreenState extends State<QuoteAddScreen> {
+class QuoteAddScreen extends ConsumerWidget {
   final GlobalKey _globalKey = GlobalKey();
-  late String title;
-  late String url;
-  late String content;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.read(imageKeyProvider.notifier).update((state) => _globalKey);
+    final quote = ref.read(quoteProvider);
     return Scaffold(
         body: Stack(children: [
-          ShareImageWidget(
-            imageWidgetKey: _globalKey,
-            content: content,
-            title: title,
-          ),
+          ShareImageWidget(),
           Container(
               color: Colors.white,
               child: GestureDetector(
@@ -50,7 +35,7 @@ class _QuoteAddScreenState extends State<QuoteAddScreen> {
         ]),
         floatingActionButton: TwitterShareWidget(
           imageWidgetKey: _globalKey,
-          title: title,
+          title: quote.title,
         ),
         resizeToAvoidBottomInset: false,
         bottomNavigationBar: BottomAppBar(

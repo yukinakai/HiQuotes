@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hi_quotes/widget/quote_widget.dart';
-import 'package:hi_quotes/quote_detail_screen.dart';
+import 'package:hi_quotes/quote_add_screen.dart';
 
 class ShareImageWidget extends ConsumerWidget {
   @override
