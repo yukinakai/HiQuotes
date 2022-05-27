@@ -1,73 +1,38 @@
 import 'package:flutter/material.dart';
-import 'package:hi_quotes/quotes_list_screen.dart';
 import 'package:hi_quotes/widget/tweet_share_widget.dart';
 import 'package:hi_quotes/widget/share_image_widget.dart';
 import 'package:hi_quotes/quote_add_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hi_quotes/widget/quote_detail_widget.dart';
+import 'package:hi_quotes/service/delete_quote.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hi_quotes/widget/quote_widget.dart';
 
-class QuoteDetailScreen extends StatefulWidget {
-  final String quoteId, title, url, content, updatedAt;
-  const QuoteDetailScreen({
-    Key? key,
-    required this.quoteId,
-    required this.title,
-    required this.url,
-    required this.content,
-    required this.updatedAt,
-  }) : super(key: key);
+final imageKeyProvider = StateProvider<GlobalKey?>((ref) => null);
 
-  @override
-  State<QuoteDetailScreen> createState() => _QuoteDetailScreenState();
-}
-
-class _QuoteDetailScreenState extends State<QuoteDetailScreen> {
+class QuoteDetailScreen extends ConsumerWidget {
   final GlobalKey _globalKey = GlobalKey();
   Image? _image;
 
-  void deleteQuote() {
-    FirebaseAuth.instance.authStateChanges().listen((User? user) {
-      if (user == null) {
-        print("user not found");
-      } else {
-        DocumentReference quote =
-            FirebaseFirestore.instance.collection('quotes').doc(widget.quoteId);
-        quote
-            .delete()
-            .then((value) => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const QuotesListScreen())))
-            .catchError((error) => print(error));
-      }
-    });
-  }
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.read(imageKeyProvider.notifier).update((state) => _globalKey);
+    final quote = ref.read(quoteProvider);
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Stack(children: [
-          ShareImageWidget(
-            imageWidgetKey: _globalKey,
-            content: widget.content,
-            title: widget.title,
-          ),
-          QuoteDetailWidget(
+          child: Stack(children: [
+        ShareImageWidget(),
+        QuoteDetailWidget(
             title: widget.title,
             url: widget.url,
             content: widget.content,
             updatedAt: widget.updatedAt,
-            image: _image
-          ),
-        ])
-      ),
+            image: _image),
+      ])),
       floatingActionButton: TwitterShareWidget(
         imageWidgetKey: _globalKey,
-        id: widget.quoteId,
-        title: widget.title,
+        id: quote.id,
+        title: quote.title,
       ),
       bottomNavigationBar: BottomAppBar(
         child: Row(
@@ -111,7 +76,7 @@ class _QuoteDetailScreenState extends State<QuoteDetailScreen> {
                 color: Colors.grey[600],
               ),
               alignment: Alignment.bottomLeft,
-              onPressed: () => {deleteQuote()},
+              onPressed: () => {deleteQuote(context, quote.id)},
             ),
           ],
         ),

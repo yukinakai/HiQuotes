@@ -22,9 +22,9 @@ class QuoteAddScreen extends StatefulWidget {
 
 class _QuoteAddScreenState extends State<QuoteAddScreen> {
   final GlobalKey _globalKey = GlobalKey();
-  // late String title;
-  // late String url;
-  // late String content;
+  late String title;
+  late String url;
+  late String content;
 
   @override
   Widget build(BuildContext context) {

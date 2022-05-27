@@ -1,25 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hi_quotes/widget/quote_widget.dart';
+import 'package:hi_quotes/quote_detail_screen.dart';
 
-class ShareImageWidget extends StatefulWidget {
-  final GlobalKey imageWidgetKey;
-  final String content, title;
-  const ShareImageWidget({
-    Key? key,
-    required this.imageWidgetKey,
-    required this.content,
-    required this.title
-  }) : super(key: key);
-
+class ShareImageWidget extends ConsumerWidget {
   @override
-  State<ShareImageWidget> createState() => _ShareImageWidgetState();
-}
-
-class _ShareImageWidgetState extends State<ShareImageWidget> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final quote = ref.read(quoteProvider);
     return RepaintBoundary(
-      key: widget.imageWidgetKey,
+      key: ref.read(imageKeyProvider),
       child: Container(
         height: 315,
         width: 600,
@@ -35,7 +25,7 @@ class _ShareImageWidgetState extends State<ShareImageWidget> {
             width: double.infinity,
             margin: const EdgeInsets.only(bottom: 8),
             child: AutoSizeText(
-              widget.content,
+              quote.content,
               style: TextStyle(
                 fontSize: 1000,
                 fontWeight: FontWeight.bold,
@@ -53,7 +43,7 @@ class _ShareImageWidgetState extends State<ShareImageWidget> {
               width: double.infinity,
               alignment: Alignment.topLeft,
               child: Text(
-                widget.title,
+                quote.title,
                 style: TextStyle(
                   fontSize: 8,
                   color: Colors.blueGrey[900],
