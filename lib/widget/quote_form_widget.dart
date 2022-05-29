@@ -4,14 +4,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hi_quotes/model/provider.dart';
 
 class QuoteFormWidget extends ConsumerStatefulWidget {
-  const QuoteFormWidget({Key? key}) : super(key: key);
+  final GlobalKey formWidgetKey;
+  const QuoteFormWidget({
+    Key? key,
+    required this.formWidgetKey,
+  }) : super(key: key);
 
   @override
   QuoteFormState createState() => QuoteFormState();
 }
 
 class QuoteFormState extends ConsumerState<QuoteFormWidget> {
-  final _formKey = GlobalKey<FormState>();
+  // final _formKey = GlobalKey<FormState>();
 
   final FocusNode _nodeText1 = FocusNode();
   final FocusNode _nodeText2 = FocusNode();
@@ -64,66 +68,96 @@ class QuoteFormState extends ConsumerState<QuoteFormWidget> {
     return KeyboardActions(
         config: _buildConfig(context),
         child: SingleChildScrollView(
-            child: Container(
-                margin: const EdgeInsets.only(top: 64, right: 32, left: 32),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    children: <Widget>[
-                      TextFormField(
-                        initialValue: quote.title,
-                        decoration: const InputDecoration(
-                          hintText: '記事タイトル',
-                          labelText: '記事タイトル',
-                        ),
-                        onChanged: (String value) {
-                          setState(() {
-                            quote.title = value;
-                            ref.read(quoteProvider.notifier)
-                                .update((state) => quote);
-                          });
-                        },
-                        autofocus: true,
-                        focusNode: _nodeText1,
-                        textInputAction: TextInputAction.next,
+          child: Container(
+              margin: const EdgeInsets.only(top: 64, right: 32, left: 32),
+              child: Form(
+                key: widget.formWidgetKey,
+                child: Column(
+                  children: <Widget>[
+                    TextFormField(
+                      initialValue: quote.title,
+                      decoration: const InputDecoration(
+                        hintText: '記事タイトル',
+                        labelText: '記事タイトル *',
                       ),
-                      const SizedBox(height: 8),
-                      TextFormField(
-                        initialValue: quote.url,
-                        decoration: const InputDecoration(
-                          hintText: 'URL',
-                          labelText: 'URL',
-                        ),
-                        onChanged: (String value) {
-                          setState(() {
-                            quote.url = value;
-                            ref.read(quoteProvider.notifier)
-                                .update((state) => quote);
-                          });
-                        },
-                        focusNode: _nodeText2,
-                        textInputAction: TextInputAction.next,
+                      onChanged: (String value) {
+                        setState(() {
+                          quote.title = value;
+                          ref
+                              .read(quoteProvider.notifier)
+                              .update((state) => quote);
+                        });
+                      },
+                      autofocus: true,
+                      focusNode: _nodeText1,
+                      textInputAction: TextInputAction.next,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return '必須項目です。';
+                        }
+                        if (value.length > 200) {
+                          return '200文字以内にしてください。';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 8),
+                    TextFormField(
+                      initialValue: quote.url,
+                      decoration: const InputDecoration(
+                        hintText: 'URL',
+                        labelText: 'URL *',
                       ),
-                      const SizedBox(height: 8),
-                      TextFormField(
+                      onChanged: (String value) {
+                        setState(() {
+                          quote.url = value;
+                          ref
+                              .read(quoteProvider.notifier)
+                              .update((state) => quote);
+                        });
+                      },
+                      focusNode: _nodeText2,
+                      textInputAction: TextInputAction.next,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return '必須項目です。';
+                        }
+                        if (!Uri.parse(value).isAbsolute) {
+                          return 'URLが不正です。';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 8),
+                    TextFormField(
                         keyboardType: TextInputType.multiline,
                         maxLines: null,
                         initialValue: quote.content,
                         decoration: const InputDecoration(
                           hintText: '内容',
-                          labelText: '内容',
+                          labelText: '内容 *',
                         ),
                         onChanged: (String value) {
                           setState(() {
                             quote.content = value;
-                            ref.read(quoteProvider.notifier)
+                            ref
+                                .read(quoteProvider.notifier)
                                 .update((state) => quote);
                           });
                         },
                         focusNode: _nodeText3,
-                      ),
-                    ],
-                  ),
-                ))));
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return '必須項目です。';
+                          }
+                          return null;
+                        }),
+                  ],
+                ),
+              )),
+        ));
   }
 }

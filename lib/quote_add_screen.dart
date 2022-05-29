@@ -16,6 +16,7 @@ class QuoteAddScreen extends ConsumerStatefulWidget {
 
 class QuoteAddState extends ConsumerState<QuoteAddScreen> {
   final GlobalKey _globalKey = GlobalKey();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +31,9 @@ class QuoteAddState extends ConsumerState<QuoteAddScreen> {
               child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTap: () => FocusScope.of(context).unfocus(),
-                  child: QuoteFormWidget())),
+                  child: QuoteFormWidget(
+                    formWidgetKey: _formKey,
+                  ))),
         ]),
         floatingActionButton: TwitterShareWidget(
           imageWidgetKey: _globalKey,
@@ -62,15 +65,21 @@ class QuoteAddState extends ConsumerState<QuoteAddScreen> {
                 },
               ),
               IconButton(
-                padding: const EdgeInsets.only(top: 8, right: 24, bottom: 32),
-                iconSize: 32,
-                icon: Icon(
-                  Icons.add_task,
-                  color: Colors.grey[600],
-                ),
-                onPressed: () => addQuotes(
-                    context, quote.id, quote.title, quote.url, quote.content),
-              ),
+                  padding: const EdgeInsets.only(top: 8, right: 24, bottom: 32),
+                  iconSize: 32,
+                  icon: Icon(
+                    Icons.add_task,
+                    color: Colors.grey[600],
+                  ),
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      addQuotes(context, quote.id, quote.title, quote.url,
+                          quote.content);
+                    } else {
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(const SnackBar(content: Text("エラーをご確認ください。")));
+                    }
+                  }),
             ],
           ),
         ));
