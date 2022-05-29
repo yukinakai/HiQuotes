@@ -1,23 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hi_quotes/model/provider.dart';
 
-class QuoteDetailWidget extends StatefulWidget {
-  final String title, url, content, updatedAt;
-  final Image? image;
-  const QuoteDetailWidget({
-    Key? key,
-    required this.title,
-    required this.url,
-    required this.content,
-    required this.updatedAt,
-    required this.image,
-  }) : super(key: key);
-
-  @override
-  State<QuoteDetailWidget> createState() => _QuoteDetailWidgetState();
-}
-
-class _QuoteDetailWidgetState extends State<QuoteDetailWidget> {
+class QuoteDetailWidget extends ConsumerWidget {
   void _launchUrl(url) async {
     if (!await launchUrl(
       url,
@@ -26,7 +12,8 @@ class _QuoteDetailWidgetState extends State<QuoteDetailWidget> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final quote = ref.read(quoteProvider);
     return Column(children: [
       Container(
         padding: const EdgeInsets.all(16),
@@ -37,7 +24,7 @@ class _QuoteDetailWidgetState extends State<QuoteDetailWidget> {
             Container(
               padding: const EdgeInsets.only(top: 28),
               child: Text(
-                widget.title,
+                quote.title,
                 style: TextStyle(
                   color: Colors.blueGrey[900],
                   fontWeight: FontWeight.bold,
@@ -48,17 +35,17 @@ class _QuoteDetailWidgetState extends State<QuoteDetailWidget> {
             const SizedBox(height: 8),
             InkWell(
               child: Text(
-                widget.url,
+                quote.url,
                 style: const TextStyle(
                     color: Colors.blue,
                     fontSize: 12,
                     decoration: TextDecoration.underline),
               ),
-              onTap: () => _launchUrl(Uri.parse(widget.url)),
+              onTap: () => _launchUrl(Uri.parse(quote.url)),
             ),
             const SizedBox(height: 8),
             Text(
-              widget.updatedAt,
+              quote.updatedAt,
               style: TextStyle(
                 color: Colors.grey[600],
                 fontSize: 12,
@@ -75,7 +62,7 @@ class _QuoteDetailWidgetState extends State<QuoteDetailWidget> {
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
           child: Text(
-            widget.content,
+            quote.content,
             style: TextStyle(
               color: Colors.blueGrey[900],
               fontSize: 24,
@@ -88,7 +75,6 @@ class _QuoteDetailWidgetState extends State<QuoteDetailWidget> {
           width: double.infinity,
           height: 500,
         ),
-        Container(child: widget.image)
       ]))),
     ]);
   }

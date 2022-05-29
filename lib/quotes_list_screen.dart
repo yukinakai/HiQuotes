@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:intl/intl.dart';
 import 'package:hi_quotes/quote_add_screen.dart';
-import 'package:hi_quotes/quote_detail_screen.dart';
 import 'dart:async';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
+import 'package:hi_quotes/widget/quote_widget.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hi_quotes/model/quote.dart';
+import 'package:hi_quotes/model/provider.dart';
 
-class QuotesListScreen extends StatefulWidget {
+class QuotesListScreen extends ConsumerStatefulWidget {
   const QuotesListScreen({Key? key}) : super(key: key);
 
   @override
-  State<QuotesListScreen> createState() => _QuotesListScreenState();
+  ConsumerState createState() => _QuotesListScreenState();
 }
 
-class _QuotesListScreenState extends State<QuotesListScreen> {
+class _QuotesListScreenState extends ConsumerState<QuotesListScreen> {
   late StreamSubscription _intentDataStreamSubscription;
   String content = '';
+
   @override
   void initState() {
     super.initState();
@@ -34,8 +37,7 @@ class _QuotesListScreenState extends State<QuotesListScreen> {
       setState(() {
         content = value ?? '';
       });
-    }
-    );
+    });
     ReceiveSharingIntent.reset();
 
     controller = ScrollController()..addListener(_scrollListener);
@@ -96,73 +98,31 @@ class _QuotesListScreenState extends State<QuotesListScreen> {
   @override
   Widget build(BuildContext context) {
     if (content.isNotEmpty) {
-      return QuoteAddScreen(initialContent: content);
+      ref.read(quoteProvider.notifier).update((state) => Quote(
+        content: content,
+      ));
+      return QuoteAddScreen();
     } else {
       return Scaffold(
         appBar: AppBar(
-            centerTitle: false,
-            title: Image.asset(
-              'assets/images/Logo.png',
-              height: 32,
-            ),
-            backgroundColor: Colors.white,
-            automaticallyImplyLeading: false),
+          centerTitle: false,
+          title: Image.asset(
+            'assets/images/Logo.png',
+            height: 32,
+          ),
+          backgroundColor: Colors.white,
+          automaticallyImplyLeading: false),
         body: RefreshIndicator(
           child: ListView.builder(
-              controller: controller,
-              itemCount: _data.length,
-              itemBuilder: (_, index) {
-                if (index < _data.length) {
-                  final DocumentSnapshot document = _data[index];
-                  String updatedAt = DateFormat('yyyy/MM/dd H:m:s')
-                      .format(document.get('updatedAt').toDate().toLocal());
-                  return Column(children: <Widget>[
-                    ListTile(
-                      title: Text(
-                        document.get('content'),
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: Color.fromRGBO(0, 0, 0, 100),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children:[
-                          Text(
-                            document.get('title'),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          Text(updatedAt),
-                        ]),
-                      contentPadding: const EdgeInsets.symmetric(
-                        vertical: 8,
-                        horizontal: 16,
-                      ),
-                      onTap: () => {
-                        Navigator.push(context,
-                          MaterialPageRoute(builder:
-                            (context) => QuoteDetailScreen(
-                              quoteId: document.id,
-                              title: document.get('title'),
-                              url: document.get('url'),
-                              content: document.get('content'),
-                              updatedAt: updatedAt,
-                            )
-                          )
-                        )
-                      },
-                    ),
-                    const Divider(
-                      thickness: 6,
-                      color: Color.fromRGBO(218, 210, 197, 75),
-                    )
-                  ]);
-                }
-                return const SizedBox();
-              }),
+            controller: controller,
+            itemCount: _data.length,
+            itemBuilder: (_, index) {
+              if (index < _data.length) {
+                final DocumentSnapshot document = _data[index];
+                return QuoteWidget(document: document);
+              }
+              return const SizedBox();
+            }),
           onRefresh: () async {
             _data.clear();
             _lastVisible = null;
@@ -171,8 +131,9 @@ class _QuotesListScreenState extends State<QuotesListScreen> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () => {
+            ref.read(quoteProvider.notifier).update((state) => Quote()),
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const QuoteAddScreen()))
+              MaterialPageRoute(builder: (context) => QuoteAddScreen()))
           },
           child: const Icon(
             Icons.add,
