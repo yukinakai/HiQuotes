@@ -1,20 +1,11 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hi_quotes/model/quote.dart';
 import 'package:hi_quotes/quote_detail_screen.dart';
+import 'package:hi_quotes/model/provider.dart';
 
-final quoteProvider = StateProvider<Quote>((ref) {
-  return Quote(
-    id: "",
-    title: "",
-    url: "",
-    content: "",
-    updatedAt: "",
-  );
-});
 
 class QuoteWidget extends ConsumerWidget {
   final DocumentSnapshot document;

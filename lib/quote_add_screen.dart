@@ -1,41 +1,39 @@
 import 'package:flutter/material.dart';
-import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:hi_quotes/quotes_list_screen.dart';
 import 'package:hi_quotes/widget/tweet_share_widget.dart';
 import 'package:hi_quotes/widget/share_image_widget.dart';
 import 'package:hi_quotes/service/add_quote.dart';
 import 'package:hi_quotes/widget/quote_form_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hi_quotes/widget/quote_widget.dart';
+import 'package:hi_quotes/model/provider.dart';
 
-final imageKeyProvider = StateProvider<GlobalKey?>((ref) => null);
+class QuoteAddScreen extends ConsumerStatefulWidget {
+  const QuoteAddScreen({Key? key}) : super(key: key);
 
-class QuoteAddScreen extends ConsumerWidget {
+  @override
+  QuoteAddState createState() => QuoteAddState();
+}
+
+class QuoteAddState extends ConsumerState<QuoteAddScreen> {
   final GlobalKey _globalKey = GlobalKey();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    ref.read(imageKeyProvider.notifier).update((state) => _globalKey);
+  Widget build(BuildContext context) {
     final quote = ref.read(quoteProvider);
     return Scaffold(
         body: Stack(children: [
-          ShareImageWidget(),
+          ShareImageWidget(
+            imageWidgetKey: _globalKey,
+          ),
           Container(
               color: Colors.white,
               child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTap: () => FocusScope.of(context).unfocus(),
-                  child: QuoteFormWidget(
-                    quoteId: widget.quoteId,
-                    initialTitle: widget.initialTitle,
-                    initialUrl: widget.initialUrl,
-                    initialContent: widget.initialContent,
-                  )
-                  ))
+                  child: QuoteFormWidget())),
         ]),
         floatingActionButton: TwitterShareWidget(
           imageWidgetKey: _globalKey,
-          title: quote.title,
         ),
         resizeToAvoidBottomInset: false,
         bottomNavigationBar: BottomAppBar(
@@ -71,12 +69,7 @@ class QuoteAddScreen extends ConsumerWidget {
                   color: Colors.grey[600],
                 ),
                 onPressed: () => addQuotes(
-                  context,
-                  widget.quoteId,
-                  title,
-                  url,
-                  content
-                ),
+                    context, quote.id, quote.title, quote.url, quote.content),
               ),
             ],
           ),

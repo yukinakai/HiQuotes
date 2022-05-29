@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:hi_quotes/icons/twitter_logo_white_icons.dart';
 import 'dart:async';
@@ -12,12 +13,10 @@ import 'package:uuid/uuid.dart';
 class TwitterShareWidget extends StatefulWidget {
   final GlobalKey imageWidgetKey;
   final String? id;
-  final String title;
   const TwitterShareWidget({
     Key? key,
     required this.imageWidgetKey,
     this.id,
-    required this.title,
   }) : super(key: key);
 
   @override

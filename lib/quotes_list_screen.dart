@@ -5,15 +5,18 @@ import 'package:hi_quotes/quote_add_screen.dart';
 import 'dart:async';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:hi_quotes/widget/quote_widget.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hi_quotes/model/quote.dart';
+import 'package:hi_quotes/model/provider.dart';
 
-class QuotesListScreen extends StatefulWidget {
+class QuotesListScreen extends ConsumerStatefulWidget {
   const QuotesListScreen({Key? key}) : super(key: key);
 
   @override
-  State<QuotesListScreen> createState() => _QuotesListScreenState();
+  ConsumerState createState() => _QuotesListScreenState();
 }
 
-class _QuotesListScreenState extends State<QuotesListScreen> {
+class _QuotesListScreenState extends ConsumerState<QuotesListScreen> {
   late StreamSubscription _intentDataStreamSubscription;
   String content = '';
 
@@ -95,28 +98,31 @@ class _QuotesListScreenState extends State<QuotesListScreen> {
   @override
   Widget build(BuildContext context) {
     if (content.isNotEmpty) {
+      ref.read(quoteProvider.notifier).update((state) => Quote(
+        content: content,
+      ));
       return QuoteAddScreen();
     } else {
       return Scaffold(
         appBar: AppBar(
-            centerTitle: false,
-            title: Image.asset(
-              'assets/images/Logo.png',
-              height: 32,
-            ),
-            backgroundColor: Colors.white,
-            automaticallyImplyLeading: false),
+          centerTitle: false,
+          title: Image.asset(
+            'assets/images/Logo.png',
+            height: 32,
+          ),
+          backgroundColor: Colors.white,
+          automaticallyImplyLeading: false),
         body: RefreshIndicator(
           child: ListView.builder(
-              controller: controller,
-              itemCount: _data.length,
-              itemBuilder: (_, index) {
-                if (index < _data.length) {
-                  final DocumentSnapshot document = _data[index];
-                  return QuoteWidget(document: document);
-                }
-                return const SizedBox();
-              }),
+            controller: controller,
+            itemCount: _data.length,
+            itemBuilder: (_, index) {
+              if (index < _data.length) {
+                final DocumentSnapshot document = _data[index];
+                return QuoteWidget(document: document);
+              }
+              return const SizedBox();
+            }),
           onRefresh: () async {
             _data.clear();
             _lastVisible = null;
@@ -125,8 +131,9 @@ class _QuotesListScreenState extends State<QuotesListScreen> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () => {
+            ref.read(quoteProvider.notifier).update((state) => Quote()),
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => QuoteAddScreen()))
+              MaterialPageRoute(builder: (context) => QuoteAddScreen()))
           },
           child: const Icon(
             Icons.add,

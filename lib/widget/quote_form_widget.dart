@@ -1,25 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hi_quotes/model/provider.dart';
 
-class QuoteFormWidget extends StatefulWidget {
-  final String? quoteId, initialTitle, initialUrl, initialContent;
-  const QuoteFormWidget({
-    Key? key,
-    required this.quoteId,
-    required this.initialTitle,
-    required this.initialUrl,
-    required this.initialContent,
-  }) : super(key: key);
+class QuoteFormWidget extends ConsumerStatefulWidget {
+  const QuoteFormWidget({Key? key}) : super(key: key);
 
   @override
-  State<QuoteFormWidget> createState() => _QuoteFormWidgetState();
+  QuoteFormState createState() => QuoteFormState();
 }
 
-class _QuoteFormWidgetState extends State<QuoteFormWidget> {
+class QuoteFormState extends ConsumerState<QuoteFormWidget> {
   final _formKey = GlobalKey<FormState>();
-  late String title = widget.initialTitle ?? "";
-  late String url = widget.initialUrl ?? "";
-  late String content = widget.initialContent ?? "";
 
   final FocusNode _nodeText1 = FocusNode();
   final FocusNode _nodeText2 = FocusNode();
@@ -68,76 +60,70 @@ class _QuoteFormWidgetState extends State<QuoteFormWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final quote = ref.read(quoteProvider);
     return KeyboardActions(
-                      config: _buildConfig(context),
-                      child: SingleChildScrollView(
-                          child: Container(
-                              margin: const EdgeInsets.only(
-                                  top: 64, right: 32, left: 32),
-                              child: Form(
-                                key: _formKey,
-                                child: Column(
-                                  children: <Widget>[
-                                    TextFormField(
-                                      initialValue: widget.initialTitle,
-                                      decoration: const InputDecoration(
-                                        hintText: '記事タイトル',
-                                        labelText: '記事タイトル',
-                                      ),
-                                      onChanged: (String value) {
-                                        setState(() {
-                                          title = value;
-                                        });
-                                      },
-                                      autofocus: true,
-                                      focusNode: _nodeText1,
-                                      textInputAction: TextInputAction.next,
-                                      maxLength: 200,
-                                      autovalidateMode:
-                                          AutovalidateMode.onUserInteraction,
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return "必須項目です";
-                                        }
-                                        if (value.trim() == '') {
-                                          return "必須項目です";
-                                        }
-                                        return null;
-                                      },
-                                    ),
-                                    const SizedBox(height: 8),
-                                    TextFormField(
-                                      initialValue: widget.initialUrl,
-                                      decoration: const InputDecoration(
-                                        hintText: 'URL',
-                                        labelText: 'URL',
-                                      ),
-                                      onChanged: (String value) {
-                                        setState(() {
-                                          url = value;
-                                        });
-                                      },
-                                      focusNode: _nodeText2,
-                                      textInputAction: TextInputAction.next,
-                                    ),
-                                    const SizedBox(height: 8),
-                                    TextFormField(
-                                      keyboardType: TextInputType.multiline,
-                                      maxLines: null,
-                                      initialValue: widget.initialContent,
-                                      decoration: const InputDecoration(
-                                        hintText: '内容',
-                                        labelText: '内容',
-                                      ),
-                                      onChanged: (String value) {
-                                        setState(() {
-                                          content = value;
-                                        });
-                                      },
-                                      focusNode: _nodeText3,
-                                    ),
-                                  ],
-                                ),
-                              ))));
+        config: _buildConfig(context),
+        child: SingleChildScrollView(
+            child: Container(
+                margin: const EdgeInsets.only(top: 64, right: 32, left: 32),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: <Widget>[
+                      TextFormField(
+                        initialValue: quote.title,
+                        decoration: const InputDecoration(
+                          hintText: '記事タイトル',
+                          labelText: '記事タイトル',
+                        ),
+                        onChanged: (String value) {
+                          setState(() {
+                            quote.title = value;
+                            ref.read(quoteProvider.notifier)
+                                .update((state) => quote);
+                          });
+                        },
+                        autofocus: true,
+                        focusNode: _nodeText1,
+                        textInputAction: TextInputAction.next,
+                      ),
+                      const SizedBox(height: 8),
+                      TextFormField(
+                        initialValue: quote.url,
+                        decoration: const InputDecoration(
+                          hintText: 'URL',
+                          labelText: 'URL',
+                        ),
+                        onChanged: (String value) {
+                          setState(() {
+                            quote.url = value;
+                            ref.read(quoteProvider.notifier)
+                                .update((state) => quote);
+                          });
+                        },
+                        focusNode: _nodeText2,
+                        textInputAction: TextInputAction.next,
+                      ),
+                      const SizedBox(height: 8),
+                      TextFormField(
+                        keyboardType: TextInputType.multiline,
+                        maxLines: null,
+                        initialValue: quote.content,
+                        decoration: const InputDecoration(
+                          hintText: '内容',
+                          labelText: '内容',
+                        ),
+                        onChanged: (String value) {
+                          setState(() {
+                            quote.content = value;
+                            ref.read(quoteProvider.notifier)
+                                .update((state) => quote);
+                          });
+                        },
+                        focusNode: _nodeText3,
+                      ),
+                    ],
+                  ),
+                ))));
   }
 }

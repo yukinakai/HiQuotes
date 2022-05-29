@@ -1,15 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hi_quotes/widget/quote_widget.dart';
-import 'package:hi_quotes/quote_add_screen.dart';
+import 'package:hi_quotes/model/provider.dart';
 
-class ShareImageWidget extends ConsumerWidget {
+class ShareImageWidget extends ConsumerStatefulWidget {
+  final GlobalKey imageWidgetKey;
+  const ShareImageWidget({
+    Key? key,
+    required this.imageWidgetKey,
+  }) : super(key: key);
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final quote = ref.read(quoteProvider);
+  ShareImageState createState() => ShareImageState();
+}
+
+class ShareImageState extends ConsumerState<ShareImageWidget> {
+  @override
+  Widget build(BuildContext context) {
+    final quote = ref.watch(quoteProvider);
     return RepaintBoundary(
-      key: ref.read(imageKeyProvider),
+      key: widget.imageWidgetKey,
       child: Container(
         height: 315,
         width: 600,

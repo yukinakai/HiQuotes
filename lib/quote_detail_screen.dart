@@ -5,26 +5,33 @@ import 'package:hi_quotes/quote_add_screen.dart';
 import 'package:hi_quotes/widget/quote_detail_widget.dart';
 import 'package:hi_quotes/service/delete_quote.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hi_quotes/widget/quote_widget.dart';
+import 'package:hi_quotes/model/provider.dart';
 
-class QuoteDetailScreen extends ConsumerWidget {
+class QuoteDetailScreen extends ConsumerStatefulWidget {
+  const QuoteDetailScreen({Key? key}) : super(key: key);
+
+  @override
+  QuoteDetailState createState() => QuoteDetailState();
+}
+
+class QuoteDetailState extends ConsumerState<QuoteDetailScreen> {
   final GlobalKey _globalKey = GlobalKey();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    ref.read(imageKeyProvider.notifier).update((state) => _globalKey);
+  Widget build(BuildContext context) {
     final quote = ref.read(quoteProvider);
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-          child: Stack(children: [
-        ShareImageWidget(),
-        QuoteDetailWidget(),
+        child: Stack(children: [
+          ShareImageWidget(
+            imageWidgetKey: _globalKey,
+          ),
+          QuoteDetailWidget(),
       ])),
       floatingActionButton: TwitterShareWidget(
         imageWidgetKey: _globalKey,
         id: quote.id,
-        title: quote.title,
       ),
       bottomNavigationBar: BottomAppBar(
         child: Row(
@@ -49,10 +56,8 @@ class QuoteDetailScreen extends ConsumerWidget {
               ),
               alignment: Alignment.bottomLeft,
               onPressed: () => {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => QuoteAddScreen()))
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => QuoteAddScreen()))
               },
             ),
             IconButton(

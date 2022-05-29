@@ -1,10 +1,10 @@
 class Quote {
   Quote(
-      {required this.id,
-       required this.title,
-       required this.url,
-       required this.content,
-       required this.updatedAt});
+      {this.id = "",
+      this.title = "",
+      this.url = "",
+      this.content = "",
+      this.updatedAt = "",});
 
-  final String id, title, url, content, updatedAt;
+  String id, title, url, content, updatedAt;
 }

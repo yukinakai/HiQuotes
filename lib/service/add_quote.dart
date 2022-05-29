@@ -20,7 +20,7 @@ void addQuotes(
           FirebaseFirestore.instance.collection('quotes');
       final uid = user.uid;
       final now = DateTime.now().toUtc();
-      if (quoteId == null) {
+      if (quoteId == "") {
         quotes
             .add({
               'userId': uid,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hi_quotes/widget/quote_widget.dart';
+import 'package:hi_quotes/model/provider.dart';
 
 class QuoteDetailWidget extends ConsumerWidget {
   void _launchUrl(url) async {
