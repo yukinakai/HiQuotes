@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hi_quotes/model/provider.dart';
 
 class QuoteDetailWidget extends ConsumerWidget {
+  const QuoteDetailWidget({Key? key}) : super(key: key);
+  
   void _launchUrl(url) async {
     if (!await launchUrl(
       url,
@@ -22,7 +24,7 @@ class QuoteDetailWidget extends ConsumerWidget {
         child: Column(
           children: [
             Container(
-              padding: const EdgeInsets.only(top: 28),
+              padding: const EdgeInsets.only(top: 8),
               child: Text(
                 quote.title,
                 style: TextStyle(

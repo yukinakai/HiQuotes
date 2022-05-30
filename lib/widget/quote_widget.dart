@@ -50,7 +50,7 @@ class QuoteWidget extends ConsumerWidget {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => QuoteDetailScreen())),
+                  builder: (context) => const QuoteDetailScreen())),
         },
       ),
       const Divider(

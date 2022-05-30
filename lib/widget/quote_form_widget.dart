@@ -15,8 +15,6 @@ class QuoteFormWidget extends ConsumerStatefulWidget {
 }
 
 class QuoteFormState extends ConsumerState<QuoteFormWidget> {
-  // final _formKey = GlobalKey<FormState>();
-
   final FocusNode _nodeText1 = FocusNode();
   final FocusNode _nodeText2 = FocusNode();
   final FocusNode _nodeText3 = FocusNode();
@@ -65,11 +63,16 @@ class QuoteFormState extends ConsumerState<QuoteFormWidget> {
   @override
   Widget build(BuildContext context) {
     final quote = ref.read(quoteProvider);
+    bool _autoFocus = true;
+    if (quote.param == "edit") {
+      _autoFocus = false;
+    }
+
     return KeyboardActions(
         config: _buildConfig(context),
         child: SingleChildScrollView(
           child: Container(
-              margin: const EdgeInsets.only(top: 64, right: 32, left: 32),
+              margin: const EdgeInsets.all(32),
               child: Form(
                 key: widget.formWidgetKey,
                 child: Column(
@@ -88,7 +91,7 @@ class QuoteFormState extends ConsumerState<QuoteFormWidget> {
                               .update((state) => quote);
                         });
                       },
-                      autofocus: true,
+                      autofocus: _autoFocus,
                       focusNode: _nodeText1,
                       textInputAction: TextInputAction.next,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
