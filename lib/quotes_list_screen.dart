@@ -100,8 +100,9 @@ class _QuotesListScreenState extends ConsumerState<QuotesListScreen> {
     if (content.isNotEmpty) {
       ref.read(quoteProvider.notifier).update((state) => Quote(
         content: content,
+        param: "new"
       ));
-      return QuoteAddScreen();
+      return const QuoteAddScreen();
     } else {
       return Scaffold(
         appBar: AppBar(
@@ -131,9 +132,9 @@ class _QuotesListScreenState extends ConsumerState<QuotesListScreen> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () => {
-            ref.read(quoteProvider.notifier).update((state) => Quote()),
+            ref.read(quoteProvider.notifier).update((state) => Quote(param: "new")),
             Navigator.push(context,
-              MaterialPageRoute(builder: (context) => QuoteAddScreen()))
+              MaterialPageRoute(builder: (context) => const QuoteAddScreen()))
           },
           child: const Icon(
             Icons.add,
