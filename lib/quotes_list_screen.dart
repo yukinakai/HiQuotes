@@ -29,7 +29,8 @@ class _QuotesListScreenState extends ConsumerState<QuotesListScreen> {
         content = value;
       });
     }, onError: (err) {
-      print("getLinkStream error: $err");
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("エラーが発生しました。後ほどお試しください。")));
     });
     // For sharing or opening urls/text coming from outside the app while the app is closed
     ReceiveSharingIntent.getInitialText().then((String? value) {
@@ -116,21 +117,20 @@ class _QuotesListScreenState extends ConsumerState<QuotesListScreen> {
           child: Stack(children: [
             if (_isLoading)
               const LinearProgressIndicator(
-                valueColor: AlwaysStoppedAnimation(Colors.yellow),
-                backgroundColor: Colors.white
-              )
+                  valueColor: AlwaysStoppedAnimation(Colors.yellow),
+                  backgroundColor: Colors.white)
             else
               const SizedBox(height: 0),
             ListView.builder(
-              controller: controller,
-              itemCount: _data.length,
-              itemBuilder: (_, index) {
-                if (index < _data.length) {
-                  final DocumentSnapshot document = _data[index];
-                  return QuoteWidget(document: document);
-                }
-                return const SizedBox();
-              })
+                controller: controller,
+                itemCount: _data.length,
+                itemBuilder: (_, index) {
+                  if (index < _data.length) {
+                    final DocumentSnapshot document = _data[index];
+                    return QuoteWidget(document: document);
+                  }
+                  return const SizedBox();
+                })
           ]),
           onRefresh: () async {
             _data.clear();

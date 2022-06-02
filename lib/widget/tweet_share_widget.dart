@@ -8,6 +8,7 @@ import 'package:flutter/rendering.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:uuid/uuid.dart';
+import 'package:logger/logger.dart';
 
 class TwitterShareWidget extends StatefulWidget {
   final GlobalKey imageWidgetKey;
@@ -23,6 +24,8 @@ class TwitterShareWidget extends StatefulWidget {
 }
 
 class _TwitterShareWidgetState extends State<TwitterShareWidget> {
+  var logger = Logger();
+
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
@@ -84,10 +87,11 @@ class _TwitterShareWidgetState extends State<TwitterShareWidget> {
       _uploadImage(ref, imageData);
       imageUrl =
           'https://firebasestorage.googleapis.com/v0/b/${ref.bucket}/o/ogp_images%2F$id.png?alt=media';
-      print('OGP Image Upload Url = $imageUrl');
+      logger.i('OGP Image Upload Url = $imageUrl');
       return Uri.parse(imageUrl);
     } on FirebaseException catch (e) {
-      print('OGP Image Upload Error = $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("エラーが発生しました。後ほどお試しください。")));
     }
   }
 
@@ -113,7 +117,7 @@ class _TwitterShareWidgetState extends State<TwitterShareWidget> {
     );
     final dynamicLink =
         await FirebaseDynamicLinks.instance.buildShortLink(dynamicLinkParams);
-    print('Dynamic Link Short Url = ${dynamicLink.shortUrl}');
+    logger.i('Dynamic Link Short Url = ${dynamicLink.shortUrl}');
     return dynamicLink.shortUrl;
   }
 }
