@@ -47,6 +47,7 @@ dependencies:
   firebase_storage: ^10.2.15
   firebase_dynamic_links: ^4.2.2
   uuid: ^3.0.6
+  logger: ^1.1.0
 
 dev_dependencies:
   flutter_test:
