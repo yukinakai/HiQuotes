@@ -28,10 +28,12 @@ class ShowAlertDialog {
               content: const Text('一度削除した内容は2復元できません'),
               actions: <Widget>[
                 TextButton(
+                  key: const Key("yes_button"),
                   onPressed: () => deleteQuote(context, quoteId),
                   child: const Text('はい'),
                 ),
                 TextButton(
+                  key: const Key("no_button"),
                   onPressed: () => Navigator.pop(context),
                   child: const Text('いいえ'),
                 ),

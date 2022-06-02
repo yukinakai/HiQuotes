@@ -52,6 +52,7 @@ class QuoteAddState extends ConsumerState<QuoteAddScreen> {
           color: Colors.yellow[400],
           child: Container(
             child: TextButton(
+              key: const Key("quote_submit_button"),
                 child: Text(
                   submitButtonLabel,
                   style: const TextStyle(
