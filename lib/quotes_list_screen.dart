@@ -23,7 +23,6 @@ class _QuotesListScreenState extends ConsumerState<QuotesListScreen> {
   @override
   void initState() {
     super.initState();
-    // For sharing or opening urls/text coming from outside the app while the app is in the memory
     _intentDataStreamSubscription =
         ReceiveSharingIntent.getTextStream().listen((String value) {
       setState(() {
@@ -56,6 +55,7 @@ class _QuotesListScreenState extends ConsumerState<QuotesListScreen> {
   DocumentSnapshot? _lastVisible;
   late bool _isLoading;
   final List<DocumentSnapshot> _data = <DocumentSnapshot<Object>>[];
+  final bool showIndicator = true;
 
   Future<void> _getData() async {
     FirebaseAuth.instance.authStateChanges().listen((User? user) async {
@@ -98,32 +98,40 @@ class _QuotesListScreenState extends ConsumerState<QuotesListScreen> {
   @override
   Widget build(BuildContext context) {
     if (content.isNotEmpty) {
-      ref.read(quoteProvider.notifier).update((state) => Quote(
-        content: content,
-        param: "new"
-      ));
+      ref
+          .read(quoteProvider.notifier)
+          .update((state) => Quote(content: content, param: "new"));
       return const QuoteAddScreen();
     } else {
       return Scaffold(
         appBar: AppBar(
-          centerTitle: false,
-          title: Image.asset(
-            'assets/images/Logo.png',
-            height: 32,
-          ),
-          backgroundColor: Colors.white,
-          automaticallyImplyLeading: false),
+            centerTitle: false,
+            title: Image.asset(
+              'assets/images/Logo.png',
+              height: 32,
+            ),
+            backgroundColor: Colors.white,
+            automaticallyImplyLeading: false),
         body: RefreshIndicator(
-          child: ListView.builder(
-            controller: controller,
-            itemCount: _data.length,
-            itemBuilder: (_, index) {
-              if (index < _data.length) {
-                final DocumentSnapshot document = _data[index];
-                return QuoteWidget(document: document);
-              }
-              return const SizedBox();
-            }),
+          child: Stack(children: [
+            if (_isLoading)
+              const LinearProgressIndicator(
+                valueColor: AlwaysStoppedAnimation(Colors.yellow),
+                backgroundColor: Colors.white
+              )
+            else
+              const SizedBox(height: 0),
+            ListView.builder(
+              controller: controller,
+              itemCount: _data.length,
+              itemBuilder: (_, index) {
+                if (index < _data.length) {
+                  final DocumentSnapshot document = _data[index];
+                  return QuoteWidget(document: document);
+                }
+                return const SizedBox();
+              })
+          ]),
           onRefresh: () async {
             _data.clear();
             _lastVisible = null;
@@ -131,10 +139,13 @@ class _QuotesListScreenState extends ConsumerState<QuotesListScreen> {
           },
         ),
         floatingActionButton: FloatingActionButton(
+          key: const Key('floating_add_button'),
           onPressed: () => {
-            ref.read(quoteProvider.notifier).update((state) => Quote(param: "new")),
+            ref
+                .read(quoteProvider.notifier)
+                .update((state) => Quote(param: "new")),
             Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const QuoteAddScreen()))
+                MaterialPageRoute(builder: (context) => const QuoteAddScreen()))
           },
           child: const Icon(
             Icons.add,

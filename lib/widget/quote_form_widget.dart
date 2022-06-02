@@ -49,6 +49,7 @@ class QuoteFormState extends ConsumerState<QuoteFormWidget> {
           KeyboardActionsItem(focusNode: _nodeText3, toolbarButtons: [
             (node) {
               return GestureDetector(
+                key: const Key("close_focus_node_3"),
                 onTap: () => node.unfocus(),
                 child: const Padding(
                   padding: EdgeInsets.all(8),
@@ -78,6 +79,7 @@ class QuoteFormState extends ConsumerState<QuoteFormWidget> {
                 child: Column(
                   children: <Widget>[
                     TextFormField(
+                      key: const Key("form_title"),
                       initialValue: quote.title,
                       decoration: const InputDecoration(
                         hintText: '記事タイトル',
@@ -107,6 +109,7 @@ class QuoteFormState extends ConsumerState<QuoteFormWidget> {
                     ),
                     const SizedBox(height: 8),
                     TextFormField(
+                      key: const Key("form_url"),
                       initialValue: quote.url,
                       decoration: const InputDecoration(
                         hintText: 'URL',
@@ -135,29 +138,30 @@ class QuoteFormState extends ConsumerState<QuoteFormWidget> {
                     ),
                     const SizedBox(height: 8),
                     TextFormField(
-                        keyboardType: TextInputType.multiline,
-                        maxLines: null,
-                        initialValue: quote.content,
-                        decoration: const InputDecoration(
-                          hintText: '内容',
-                          labelText: '内容 *',
-                        ),
-                        onChanged: (String value) {
-                          setState(() {
-                            quote.content = value;
-                            ref
-                                .read(quoteProvider.notifier)
-                                .update((state) => quote);
-                          });
-                        },
-                        focusNode: _nodeText3,
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return '必須項目です。';
-                          }
-                          return null;
-                        }),
+                      key: const Key("form_content"),
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
+                      initialValue: quote.content,
+                      decoration: const InputDecoration(
+                        hintText: '内容',
+                        labelText: '内容 *',
+                      ),
+                      onChanged: (String value) {
+                        setState(() {
+                          quote.content = value;
+                          ref
+                              .read(quoteProvider.notifier)
+                              .update((state) => quote);
+                        });
+                      },
+                      focusNode: _nodeText3,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return '必須項目です。';
+                        }
+                        return null;
+                      }),
                   ],
                 ),
               )),

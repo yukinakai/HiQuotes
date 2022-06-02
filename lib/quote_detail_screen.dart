@@ -28,6 +28,7 @@ class QuoteDetailState extends ConsumerState<QuoteDetailScreen> {
         ),
         actions: <Widget>[
           IconButton(
+            key: const Key("edit_icon"),
             onPressed: () {
               quote.param = "edit";
               ref.read(quoteProvider.notifier).update((state) => quote);
@@ -39,6 +40,7 @@ class QuoteDetailState extends ConsumerState<QuoteDetailScreen> {
             icon: const Icon(Icons.edit),
           ),
           IconButton(
+            key: const Key("delete_icon"),
             onPressed: () {
               ShowAlertDialog.showDeleteComformDialog(context, quote.id);
               // deleteQuote(context, quote.id);
