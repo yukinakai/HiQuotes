@@ -40,7 +40,6 @@ dependencies:
   firebase_auth: ^3.3.12
   cloud_firestore: ^3.1.11
   keyboard_actions: "^3.4.7"
-  receive_sharing_intent: ^1.4.5
   google_fonts: ^2.3.2
   url_launcher: ^6.1.0
   auto_size_text: ^3.0.0

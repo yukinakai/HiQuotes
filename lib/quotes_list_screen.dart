@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hi_quotes/quote_add_screen.dart';
 import 'dart:async';
-import 'package:receive_sharing_intent/receive_sharing_intent.dart';
+// import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:hi_quotes/widget/quote_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hi_quotes/model/quote.dart';
@@ -17,39 +17,14 @@ class QuotesListScreen extends ConsumerStatefulWidget {
 }
 
 class _QuotesListScreenState extends ConsumerState<QuotesListScreen> {
-  late StreamSubscription _intentDataStreamSubscription;
-  String content = '';
-
   @override
   void initState() {
     super.initState();
-    _intentDataStreamSubscription =
-        ReceiveSharingIntent.getTextStream().listen((String value) {
-      setState(() {
-        content = value;
-      });
-    }, onError: (err) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("エラーが発生しました。後ほどお試しください。")));
-    });
-    // For sharing or opening urls/text coming from outside the app while the app is closed
-    ReceiveSharingIntent.getInitialText().then((String? value) {
-      setState(() {
-        content = value ?? '';
-      });
-    });
-    ReceiveSharingIntent.reset();
 
     controller = ScrollController()..addListener(_scrollListener);
     super.initState();
     _isLoading = true;
     _getData();
-  }
-
-  @override
-  void dispose() {
-    _intentDataStreamSubscription.cancel();
-    super.dispose();
   }
 
   late ScrollController controller;
@@ -98,63 +73,56 @@ class _QuotesListScreenState extends ConsumerState<QuotesListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (content.isNotEmpty) {
-      ref
-          .read(quoteProvider.notifier)
-          .update((state) => Quote(content: content, param: "new"));
-      return const QuoteAddScreen();
-    } else {
-      return Scaffold(
-        appBar: AppBar(
-            centerTitle: false,
-            title: Image.asset(
-              'assets/images/Logo.png',
-              height: 32,
-            ),
-            backgroundColor: Colors.white,
-            automaticallyImplyLeading: false),
-        body: RefreshIndicator(
-          child: Stack(children: [
-            if (_isLoading)
-              const LinearProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation(Colors.yellow),
-                  backgroundColor: Colors.white)
-            else
-              const SizedBox(height: 0),
-            ListView.builder(
-                controller: controller,
-                itemCount: _data.length,
-                itemBuilder: (_, index) {
-                  if (index < _data.length) {
-                    final DocumentSnapshot document = _data[index];
-                    return QuoteWidget(document: document);
-                  }
-                  return const SizedBox();
-                })
-          ]),
-          onRefresh: () async {
-            _data.clear();
-            _lastVisible = null;
-            await _getData();
-          },
-        ),
-        floatingActionButton: FloatingActionButton(
-          key: const Key('floating_add_button'),
-          onPressed: () => {
-            ref
-                .read(quoteProvider.notifier)
-                .update((state) => Quote(param: "new")),
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const QuoteAddScreen()))
-          },
-          child: const Icon(
-            Icons.add,
-            color: Colors.black,
+    return Scaffold(
+      appBar: AppBar(
+          centerTitle: false,
+          title: Image.asset(
+            'assets/images/Logo.png',
+            height: 32,
           ),
-          backgroundColor: Colors.yellow[400],
+          backgroundColor: Colors.white,
+          automaticallyImplyLeading: false),
+      body: RefreshIndicator(
+        child: Stack(children: [
+          if (_isLoading)
+            const LinearProgressIndicator(
+                valueColor: AlwaysStoppedAnimation(Colors.yellow),
+                backgroundColor: Colors.white)
+          else
+            const SizedBox(height: 0),
+          ListView.builder(
+              controller: controller,
+              itemCount: _data.length,
+              itemBuilder: (_, index) {
+                if (index < _data.length) {
+                  final DocumentSnapshot document = _data[index];
+                  return QuoteWidget(document: document);
+                }
+                return const SizedBox();
+              })
+        ]),
+        onRefresh: () async {
+          _data.clear();
+          _lastVisible = null;
+          await _getData();
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        key: const Key('floating_add_button'),
+        onPressed: () => {
+          ref
+              .read(quoteProvider.notifier)
+              .update((state) => Quote(param: "new")),
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const QuoteAddScreen()))
+        },
+        child: const Icon(
+          Icons.add,
+          color: Colors.black,
         ),
-      );
-    }
+        backgroundColor: Colors.yellow[400],
+      ),
+    );
   }
 
   void _scrollListener() {
