@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hi_quotes/quote_add_screen.dart';
 import 'dart:async';
-// import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:hi_quotes/widget/quote_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hi_quotes/model/quote.dart';

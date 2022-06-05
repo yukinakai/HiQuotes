@@ -6,9 +6,13 @@ import 'package:hi_quotes/widget/quote_detail_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hi_quotes/model/provider.dart';
 import 'package:hi_quotes/service/show_alart_dialog.dart';
+import 'package:logger/logger.dart';
+
+var logger = Logger();
 
 class QuoteDetailScreen extends ConsumerStatefulWidget {
-  const QuoteDetailScreen({Key? key}) : super(key: key);
+  final String? arguments;
+  const QuoteDetailScreen({Key? key, this.arguments}) : super(key: key);
 
   @override
   QuoteDetailState createState() => QuoteDetailState();
@@ -19,6 +23,7 @@ class QuoteDetailState extends ConsumerState<QuoteDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    logger.i(widget.arguments);
     final quote = ref.read(quoteProvider);
     return Scaffold(
       appBar: AppBar(
