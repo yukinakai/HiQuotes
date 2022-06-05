@@ -27,8 +27,8 @@ void main() {
       // アプリを開く
       app.main();
       await tester.pumpAndSettle();
-      // リストの表示を待つ
-      await tester.pump(const Duration(seconds: 1));
+      // 一応リストの表示を待つ
+      await tester.pump(const Duration(seconds: 3));
       // 初期はリストが0件であることを確認する
       expect(find.byType(ListTile), findsNothing);
     });
@@ -49,17 +49,17 @@ void main() {
       expect(quoteSubmitButton, findsOneWidget);
       expect(quoteSubmitButtonText, findsOneWidget);
       // 登録内容の入力
+      await tester.enterText(formContentFinder, testContent);
       await tester.enterText(formTitleFinder, testTitle);
       await tester.enterText(formUrlFinder, testUrl);
-      await tester.enterText(formContentFinder, testContent);
       // キーボードを閉じる
       await tester.tap(find.byKey(const Key("close_focus_node_3")));
       await tester.pumpAndSettle();
       // 登録＆一案画面への遷移
       await tester.tap(quoteSubmitButton);
       await tester.pumpAndSettle();
-      // リストの表示を待つ
-      await tester.pump(const Duration(seconds: 1));
+      // 一応リストの表示を待つ
+      await tester.pump(const Duration(seconds: 3));
       // 登録結果の確認
       expect(find.byType(ListTile), findsOneWidget);
       expect(quoteTitleFinder, findsOneWidget);
@@ -70,8 +70,8 @@ void main() {
       // アプリを開く
       app.main();
       await tester.pumpAndSettle();
-      // リストの読み込みを待つ
-      await tester.pump(const Duration(seconds: 1));
+      // 一応リストの読み込みを待つ
+      await tester.pump(const Duration(seconds: 3));
       // 求人詳細へ画面遷移 ※ケース上1件しかないはずなので、これで通る
       await tester.tap(find.byType(ListTile));
       await tester.pumpAndSettle();
@@ -87,13 +87,13 @@ void main() {
       final quoteSubmitButtonText = find.text("更新");
       expect(quoteSubmitButtonText, findsOneWidget);
       // 登録内容の更新＆一覧画面への遷移
+      await tester.enterText(formContentFinder, testContentEdit);
       await tester.enterText(formTitleFinder, testTitleEdit);
       await tester.enterText(formUrlFinder, testUrlEdit);
-      await tester.enterText(formContentFinder, testContentEdit);
       await tester.tap(quoteSubmitButton);
       await tester.pumpAndSettle();
-      // リストの読み込みを待つ
-      await tester.pump(const Duration(seconds: 1));
+      // 一応リストの読み込みを待つ
+      await tester.pump(const Duration(seconds: 3));
       await tester.pumpAndSettle();
       // 更新した内容の確認
       expect(find.text(testTitleEdit), findsOneWidget);
@@ -104,8 +104,8 @@ void main() {
       // アプリを開く
       app.main();
       await tester.pumpAndSettle();
-      // リストの読み込みを待つ
-      await tester.pump(const Duration(seconds: 1));
+      // 一応リストの読み込みを待つ
+      await tester.pump(const Duration(seconds: 3));
       // 求人詳細へ画面遷移 ※ケース上1件しかないはずなので、これで通る
       await tester.tap(find.byType(ListTile));
       await tester.pumpAndSettle();
@@ -122,8 +122,8 @@ void main() {
       // はいボタンをタップ＆一覧画面への遷移
       await tester.tap(find.byKey(const Key("yes_button")));
       await tester.pumpAndSettle();
-      // リストの読み込みを待つ
-      await tester.pump(const Duration(seconds: 1));
+      // 一応リストの読み込みを待つ
+      await tester.pump(const Duration(seconds: 3));
       // 削除を確認
       expect(find.text(testTitleEdit), findsNothing);
     });
