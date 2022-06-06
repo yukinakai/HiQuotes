@@ -23,7 +23,7 @@ class QuoteDetailState extends ConsumerState<QuoteDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final quote = ref.read(quoteProvider);
+    final quote = ref.watch(quoteProvider);
     if (widget.arguments != null) {
       quote.id = widget.arguments!;
       ref.read(quoteProvider.notifier).update((state) => quote);

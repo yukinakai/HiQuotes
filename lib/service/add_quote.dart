@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:hi_quotes/quotes_list_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -5,7 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:logger/logger.dart';
 
 void addQuotes(
-    context, String? quoteId, String title, String url, String content) {
+    context, String? quoteId, String title, String url, String content) async {
   var logger = Logger();
   FirebaseAuth.instance.authStateChanges().listen((User? user) {
     if (user == null) {
@@ -37,23 +39,28 @@ void addQuotes(
               logger.e(error);
             });
       } else {
-        quotes
-            .doc(quoteId)
-            .update({
-              'title': title,
-              'url': url,
-              'content': content,
-              'updatedAt': now,
-            })
-            .then((value) => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const QuotesListScreen())))
-            .catchError((error) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("エラーが発生しました。後ほどお試しください。")));
-              logger.e(error);
-            });
+        DocumentReference docRef = quotes.doc(quoteId);
+        docRef.get().then((value) {
+          DocumentSnapshot document = value;
+          if (document.get("userId") == user.uid) {
+            docRef
+                .update({
+                  'title': title,
+                  'url': url,
+                  'content': content,
+                  'updatedAt': now,
+                })
+                .then((value) => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const QuotesListScreen())))
+                .catchError((error) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("エラーが発生しました。後ほどお試しください。")));
+                  logger.e(error);
+                });
+          }
+        });
       }
     }
   });
