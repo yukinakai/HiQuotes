@@ -21,7 +21,6 @@ class _QuotesListScreenState extends ConsumerState<QuotesListScreen> {
     super.initState();
 
     controller = ScrollController()..addListener(_scrollListener);
-    super.initState();
     _isLoading = true;
     _getData();
   }
@@ -86,9 +85,7 @@ class _QuotesListScreenState extends ConsumerState<QuotesListScreen> {
           if (_isLoading)
             const LinearProgressIndicator(
                 valueColor: AlwaysStoppedAnimation(Colors.yellow),
-                backgroundColor: Colors.white)
-          else
-            const SizedBox(height: 0),
+                backgroundColor: Colors.white),
           ListView.builder(
               controller: controller,
               itemCount: _data.length,

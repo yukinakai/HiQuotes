@@ -23,8 +23,11 @@ class QuoteDetailState extends ConsumerState<QuoteDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    logger.i(widget.arguments);
     final quote = ref.read(quoteProvider);
+    if (widget.arguments != null) {
+      quote.id = widget.arguments!;
+      ref.read(quoteProvider.notifier).update((state) => quote);
+    }
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -48,7 +51,6 @@ class QuoteDetailState extends ConsumerState<QuoteDetailScreen> {
             key: const Key("delete_icon"),
             onPressed: () {
               ShowAlertDialog.showDeleteComformDialog(context, quote.id);
-              // deleteQuote(context, quote.id);
             },
             icon: const Icon(Icons.delete_forever),
           )
