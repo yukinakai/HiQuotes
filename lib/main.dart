@@ -6,10 +6,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hi_quotes/quote_detail_screen.dart';
 import 'package:hi_quotes/quotes_list_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  setUrlStrategy(PathUrlStrategy());
   runApp(const ProviderScope(child: MyApp()));
 }
 
