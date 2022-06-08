@@ -12,19 +12,24 @@ void deleteQuote(context, String quoteId) {
           .showSnackBar(const SnackBar(content: Text("エラーをご確認ください。")));
       logger.e("user not found");
     } else {
-      DocumentReference quote =
+      DocumentReference docRef =
           FirebaseFirestore.instance.collection('quotes').doc(quoteId);
-      quote
-          .delete()
-          .then((value) => Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const QuotesListScreen())))
-          .catchError((error) {
+      docRef.get().then((value) {
+        DocumentSnapshot document = value;
+        if (document.get("userId") == user.uid) {
+          docRef
+              .delete()
+              .then((value) => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const QuotesListScreen())))
+              .catchError((error) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("エラーが発生しました。後ほどお試しください。")));
+                const SnackBar(content: Text("エラーが発生しました。後ほどお試しください。")));
             logger.e(error);
           });
+        }
+      });
     }
   });
 }
