@@ -48,7 +48,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAgjA7KAcVQbG-0-jU-w_MsGt-d7FTmBmg',
-    appId: '1:597694034365:android:38bc63cd7cb2e20633e2d4',
+    appId: '1:597694034365:android:4bf36556c6fc1b9c33e2d4',
     messagingSenderId: '597694034365',
     projectId: 'hi-quotes-13d85',
     storageBucket: 'hi-quotes-13d85.appspot.com',
@@ -56,11 +56,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDiIrvSyZ9xD5xb24vxWBARXJzuONpTvXs',
-    appId: '1:597694034365:ios:00ad4064eaba29e233e2d4',
+    appId: '1:597694034365:ios:2f5d4cddd3c6499333e2d4',
     messagingSenderId: '597694034365',
     projectId: 'hi-quotes-13d85',
     storageBucket: 'hi-quotes-13d85.appspot.com',
-    iosClientId: '597694034365-agte6gh4omkd195hfloe6tea62g08vpt.apps.googleusercontent.com',
-    iosBundleId: 'com.example.hiQuotes',
+    iosClientId: '597694034365-nk82ct5stbjjm1ufmaq8u1req6dek9es.apps.googleusercontent.com',
+    iosBundleId: 'com.hiquote-app',
   );
 }

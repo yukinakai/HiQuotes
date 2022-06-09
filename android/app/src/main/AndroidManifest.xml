@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.hi_quotes">
+    package="com.hiquote_app">
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <queries>
         <!-- If your app opens https URLs -->

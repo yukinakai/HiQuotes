@@ -7,45 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:597694034365:android:7b6a6381434a3a7633e2d4",
+        "mobilesdk_app_id": "1:597694034365:android:4bf36556c6fc1b9c33e2d4",
         "android_client_info": {
-          "package_name": "com.example.hiQuotes"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "597694034365-uc02on5s7gqsfrohk54pe7d9atqf82a9.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAgjA7KAcVQbG-0-jU-w_MsGt-d7FTmBmg"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "597694034365-uc02on5s7gqsfrohk54pe7d9atqf82a9.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "597694034365-agte6gh4omkd195hfloe6tea62g08vpt.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.hiQuotes"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:597694034365:android:38bc63cd7cb2e20633e2d4",
-        "android_client_info": {
-          "package_name": "com.example.hi_quotes"
+          "package_name": "com.hiquote_app"
         }
       },
       "oauth_client": [
