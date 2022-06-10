@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:hi_quotes/widget/tweet_share_widget.dart';
+import 'package:hi_quotes/service/share%20on%20twitter.dart';
 import 'package:hi_quotes/widget/share_image_widget.dart';
 import 'package:hi_quotes/service/add_quote.dart';
 import 'package:hi_quotes/widget/quote_form_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hi_quotes/model/provider.dart';
+import 'package:hi_quotes/icons/twitter_logo_white_icons.dart';
 
 class QuoteAddScreen extends ConsumerStatefulWidget {
   const QuoteAddScreen({Key? key}) : super(key: key);
@@ -14,7 +15,7 @@ class QuoteAddScreen extends ConsumerStatefulWidget {
 }
 
 class QuoteAddState extends ConsumerState<QuoteAddScreen> {
-  final GlobalKey _globalKey = GlobalKey();
+  final GlobalKey _imageKey = GlobalKey();
   final _formKey = GlobalKey<FormState>();
   String submitButtonLabel = "登録";
 
@@ -33,7 +34,7 @@ class QuoteAddState extends ConsumerState<QuoteAddScreen> {
       ),
       body: Stack(children: [
         ShareImageWidget(
-          imageWidgetKey: _globalKey,
+          imageWidgetKey: _imageKey,
         ),
         Container(
             color: Colors.white,
@@ -44,15 +45,29 @@ class QuoteAddState extends ConsumerState<QuoteAddScreen> {
                   formWidgetKey: _formKey,
                 ))),
       ]),
-      floatingActionButton: TwitterShareWidget(
-        imageWidgetKey: _globalKey,
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(TwitterLogoWhite.twitterLogoWhite),
+        backgroundColor: Colors.lightBlueAccent,
+        onPressed: () {
+          if (_formKey.currentState!.validate()) {
+            if (quote.param != null) {
+              addQuotes(
+                  context, quote.id, quote.title, quote.url, quote.content);
+            }
+            setState(() {});
+            shareOnTwitter(_imageKey, quote.id);
+          } else {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(content: Text("エラーをご確認ください。")));
+          }
+        },
       ),
       resizeToAvoidBottomInset: false,
       bottomNavigationBar: BottomAppBar(
           color: Colors.yellow[400],
           child: Container(
             child: TextButton(
-              key: const Key("quote_submit_button"),
+                key: const Key("quote_submit_button"),
                 child: Text(
                   submitButtonLabel,
                   style: const TextStyle(
