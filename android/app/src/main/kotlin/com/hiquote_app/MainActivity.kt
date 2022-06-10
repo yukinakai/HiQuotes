@@ -1,4 +1,4 @@
-package com.example.hi_quotes
+package com.hiquote_app
 
 import io.flutter.embedding.android.FlutterActivity
 
