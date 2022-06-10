@@ -13,7 +13,7 @@ var logger = Logger();
 
 Future<void> shareOnTwitter(
   GlobalKey imageWidgetKey,
-  String? quoteId,
+  String quoteId,
 ) async {
   await Future.delayed(const Duration(milliseconds: 100));
   _convertWidgetToImage(imageWidgetKey).then(((value) {
@@ -59,8 +59,8 @@ Future<Uint8List> _convertWidgetToImage(GlobalKey imageWidgetKey,) async {
   // return Image.memory(pngBytes);
 }
 
-Future<Uri?> _getImageUrl(Uint8List imageData, String? quoteId) async {
-  final id = quoteId ?? const Uuid().v4();
+Future<Uri?> _getImageUrl(Uint8List imageData, String quoteId) async {
+  final id = quoteId == "" ? const Uuid().v4() : quoteId;
   final ref = FirebaseStorage.instance.ref('ogp_images/$id.png');
   final String imageUrl;
   _uploadImage(ref, imageData);
